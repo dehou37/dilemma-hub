@@ -1,0 +1,50 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  email     String   @unique
+  dilemmas  Dilemma[]
+  comments  Comment[]
+  votes     Vote[]
+}
+
+model Dilemma {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  options     String[]
+  author      User      @relation(fields: [authorId], references: [id])
+  authorId    String
+  votes       Vote[]
+  comments    Comment[]
+  createdAt   DateTime  @default(now())
+}
+
+model Vote {
+  id         String    @id @default(cuid())
+  user       User      @relation(fields: [userId], references: [id])
+  userId     String
+  dilemma    Dilemma   @relation(fields: [dilemmaId], references: [id])
+  dilemmaId  String
+  option     Int
+  createdAt  DateTime  @default(now())
+
+  @@unique([userId, dilemmaId])
+}
+
+model Comment {
+  id         String    @id @default(cuid())
+  content    String
+  user       User      @relation(fields: [userId], references: [id])
+  userId     String
+  dilemma    Dilemma   @relation(fields: [dilemmaId], references: [id])
+  dilemmaId  String
+  createdAt  DateTime  @default(now())
+}

@@ -1,0 +1,10 @@
+import { Router } from "express";
+import { getAllDilemmas, getDilemmaById, createDilemma } from "../controllers/dilemmaController";
+
+const router = Router();
+
+router.get("/", getAllDilemmas);
+router.get("/:id", getDilemmaById);
+router.post("/", createDilemma);
+
+export default router;
