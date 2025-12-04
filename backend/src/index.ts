@@ -12,7 +12,9 @@ import authOptional from "./middleware/authOptional.ts";
 dotenv.config();
 
 const app = express();
-app.use(cors());
+// Allow frontend to send/receive cookies. Set FRONTEND_URL in .env for production.
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
+app.use(cors({ origin: FRONTEND_URL, credentials: true }));
 app.use(express.json());
 
 // Attach optional auth to all requests so views/pages can access req.user when available

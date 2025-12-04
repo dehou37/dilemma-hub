@@ -16,12 +16,12 @@ export default function RegisterPage() {
       const res = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ username, email, password }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Registration failed");
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      // Server sets httpOnly cookies; frontend doesn't store tokens in localStorage
       window.location.href = "/";
     } catch (err: any) {
       setError(err.message || "An error occurred");

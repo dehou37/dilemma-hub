@@ -1,17 +1,27 @@
-export function getToken() {
+export async function fetchCurrentUser(): Promise<any | null> {
   if (typeof window === "undefined") return null;
-  return localStorage.getItem("token");
+  try {
+    const res = await fetch("http://localhost:5000/api/auth/me", {
+      method: "GET",
+      credentials: "include",
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.user || null;
+  } catch (err) {
+    return null;
+  }
 }
 
-export function getUser() {
-  if (typeof window === "undefined") return null;
-  const raw = localStorage.getItem("user");
-  return raw ? JSON.parse(raw) : null;
-}
-
-export function logout() {
+export async function logout() {
   if (typeof window === "undefined") return;
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
+  try {
+    await fetch("http://localhost:5000/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+  } catch (err) {
+    // ignore
+  }
   window.location.href = "/";
 }

@@ -15,12 +15,12 @@ export default function LoginPage() {
       const res = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ email, password }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Login failed");
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      // Server sets httpOnly cookies; frontend doesn't store tokens in localStorage
       window.location.href = "/";
     } catch (err: any) {
       setError(err.message || "An error occurred");

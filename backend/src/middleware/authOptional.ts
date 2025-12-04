@@ -4,9 +4,28 @@ import type { Request, Response, NextFunction } from "express";
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev_secret_change_me";
 
+function parseCookie(cookieHeader: string | undefined) {
+  if (!cookieHeader) return {} as Record<string, string>;
+  return cookieHeader.split("; ").reduce<Record<string, string>>((acc, part) => {
+    const idx = part.indexOf("=");
+    if (idx === -1) return acc;
+    const key = part.slice(0, idx);
+    const val = decodeURIComponent(part.slice(idx + 1));
+    acc[key] = val;
+    return acc;
+  }, {} as Record<string, string>);
+}
+
 export default async function authOptional(req: Request, _res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
-  const token = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : authHeader;
+  let token = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : undefined;
+
+  if (!token) {
+    // Try cookie 'token'
+    const cookies = parseCookie(req.headers.cookie);
+    token = cookies["token"];
+  }
+
   if (!token) return next();
 
   try {

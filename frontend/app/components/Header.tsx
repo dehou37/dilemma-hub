@@ -1,12 +1,19 @@
 "use client";
 import { useEffect, useState } from "react";
-import { getUser, logout } from "../../lib/auth";
+import { fetchCurrentUser, logout } from "../../lib/auth";
 
 export default function Header() {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    setUser(getUser());
+    let mounted = true;
+    (async () => {
+      const u = await fetchCurrentUser();
+      if (mounted) setUser(u);
+    })();
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   return (
