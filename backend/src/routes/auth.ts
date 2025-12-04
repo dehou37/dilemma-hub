@@ -1,5 +1,5 @@
 import { Router } from "express";
-import bcrypt from "bcryptjs";
+import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import prisma from "../prisma.ts";
 
@@ -17,7 +17,7 @@ router.post("/register", async (req, res) => {
     const existing = await prisma.user.findFirst({ where: { OR: [{ email }, { username }] } });
     if (existing) return res.status(409).json({ error: "User already exists" });
 
-    const hashed = await bcrypt.hash(password, 10);
+    const hashed = await argon2.hash(password);
     const user = await prisma.user.create({ data: { username, email, password: hashed } });
 
     const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "7d" });
@@ -36,7 +36,7 @@ router.post("/login", async (req, res) => {
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) return res.status(401).json({ error: "Invalid credentials" });
 
-    const valid = await bcrypt.compare(password, user.password);
+    const valid = await argon2.verify(user.password!, password);
     if (!valid) return res.status(401).json({ error: "Invalid credentials" });
 
     const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "7d" });

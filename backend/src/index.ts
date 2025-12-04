@@ -5,6 +5,7 @@ import authRoutes from "./routes/auth.ts";
 import dilemmaRoutes from "./routes/dilemmas.ts";
 import voteRoutes from "./routes/votes.ts";
 import commentRoutes from "./routes/comments.ts";
+import authOptional from "./middleware/authOptional.ts";
 
 // Express server entry
 
@@ -13,6 +14,9 @@ dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Attach optional auth to all requests so views/pages can access req.user when available
+app.use(authOptional);
 
 // Simple root route for quick health check
 app.get("/", (req, res) => {

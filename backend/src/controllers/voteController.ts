@@ -2,7 +2,10 @@ import type { Request, Response } from "express";
 import prisma from "../prisma.ts";
 
 export const voteDilemma = async (req: Request, res: Response) => {
-  const { userId, dilemmaId, option } = req.body;
+  const { dilemmaId, option } = req.body;
+  const userId = (req as any).user?.id;
+  if (!userId) return res.status(401).json({ error: "Authentication required" });
+
   try {
     const vote = await prisma.vote.create({ data: { userId, dilemmaId, option } });
     res.json(vote);

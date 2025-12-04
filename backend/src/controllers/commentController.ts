@@ -2,7 +2,10 @@ import type { Request, Response } from "express";
 import prisma from "../prisma.ts";
 
 export const addComment = async (req: Request, res: Response) => {
-  const { userId, dilemmaId, content } = req.body;
+  const { dilemmaId, content } = req.body;
+  const userId = (req as any).user?.id;
+  if (!userId) return res.status(401).json({ error: "Authentication required" });
+
   const comment = await prisma.comment.create({ data: { userId, dilemmaId, content } });
   res.json(comment);
 };
