@@ -57,11 +57,15 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Ignore compiled TypeScript and generated artifacts in `src/`
+# Ignore compiled TypeScript and generated artifacts in `src/` and prisma/
 **/src/**/*.js
 **/src/**/*.js.map
 **/src/**/*.d.ts
 **/src/**/*.d.ts.map
+**/prisma/**/*.js
+**/prisma/**/*.js.map
+**/prisma/**/*.d.ts
+**/prisma/**/*.d.ts.map
 
 # Prisma client and engine
 .prisma/
