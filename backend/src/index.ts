@@ -1,10 +1,10 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import authRoutes from "./routes/auth";
-import dilemmaRoutes from "./routes/dilemmas";
-import voteRoutes from "./routes/votes";
-import commentRoutes from "./routes/comments";
+import authRoutes from "./routes/auth.ts";
+import dilemmaRoutes from "./routes/dilemmas.ts";
+import voteRoutes from "./routes/votes.ts";
+import commentRoutes from "./routes/comments.ts";
 
 // Express server entry
 
@@ -13,6 +13,11 @@ dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Simple root route for quick health check
+app.get("/", (req, res) => {
+	res.json({ ok: true, message: "Dilemma Hub API running" });
+});
 
 // Routes
 app.use("/api/auth", authRoutes);

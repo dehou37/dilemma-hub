@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getAllDilemmas, getDilemmaById, createDilemma } from "../controllers/dilemmaController";
+import { getAllDilemmas, getDilemmaById, createDilemma } from "../controllers/dilemmaController.ts";
 
 const router = Router();
 

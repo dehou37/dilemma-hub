@@ -1,8 +1,15 @@
 import { Router } from "express";
-import { voteDilemma } from "../controllers/voteController";
+import { voteDilemma, getAllVotes, getVoteById, getVotesByDilemma } from "../controllers/voteController.ts";
 
 const router = Router();
 
+// List votes
+router.get("/", getAllVotes);
+// Get single vote
+router.get("/:id", getVoteById);
+// Votes for a specific dilemma
+router.get("/dilemma/:dilemmaId", getVotesByDilemma);
+// Create a vote
 router.post("/", voteDilemma);
 
 export default router;

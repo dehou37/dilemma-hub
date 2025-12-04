@@ -1,9 +1,15 @@
-import { PrismaClient } from "@prisma/client";
 import dotenv from "dotenv";
+import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import bcrypt from "bcryptjs";
 
-dotenv.config(); // loads DATABASE_URL from .env
+dotenv.config();
 
-export const prisma = new PrismaClient(); // no options here
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL!,
+});
+
+export const prisma = new PrismaClient({ adapter });
 
 const usernames = [
   "alice", "bob", "charlie", "dave", "eve",
@@ -87,10 +93,12 @@ async function main() {
   // ----------------------
   const users = [];
   for (let i = 0; i < usernames.length; i++) {
+    const hashed = await bcrypt.hash("password123", 10);
     const user = await prisma.user.create({
       data: {
         username: usernames[i],
         email: `${usernames[i]}@example.com`,
+        password: hashed,
       },
     });
     users.push(user);
