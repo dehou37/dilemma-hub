@@ -14,8 +14,8 @@ type Dilemma = {
 export default function Home() {
   const [dilemmas, setDilemmas] = useState<Dilemma[]>([]);
   const [loading, setLoading] = useState(true);
-  const categories = ["All", "ETHICS", "TECHNOLOGY", "PERSONAL", "WORK", "LIFESTYLE", "POLITICS", "OTHER"];
   const [active, setActive] = useState("All");
+  const [categories, setCategories] = useState<string[]>([]);
 
   useEffect(() => {
     let mounted = true;
@@ -24,7 +24,17 @@ export default function Home() {
         const res = await fetch("http://localhost:5000/api/dilemmas");
         const data = await res.json();
         if (!mounted) return;
-        setDilemmas(data || []);
+        const list: Dilemma[] = data || [];
+        setDilemmas(list);
+        // derive categories dynamically from dilemmas
+        const cats = Array.from(
+          new Set(list.map((d) => (d.category ? String(d.category) : "OTHER")))
+        ).filter(Boolean);
+        // Ensure 'OTHER' is always last and keep original order otherwise
+        const hasOther = cats.includes("OTHER");
+        const nonOther = cats.filter((c) => c !== "OTHER");
+        const ordered = ["All", ...nonOther, ...(hasOther ? ["OTHER"] : [])];
+        setCategories(ordered);
       } catch (err) {
         console.error(err);
       } finally {
@@ -42,16 +52,6 @@ export default function Home() {
     <div className="min-h-screen bg-zinc-50">
       <main className="mx-auto max-w-4xl px-6 py-10">
         <header className="mb-8 flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-md bg-slate-900 text-white flex items-center justify-center font-semibold">⚖️</div>
-              <div>
-                <div className="text-lg font-bold">Ethical Forum</div>
-                <div className="text-sm text-zinc-500">Explore moral questions</div>
-              </div>
-            </div>
-          </div>
-          <a href="/login" className="rounded-full bg-amber-500 px-4 py-2 text-sm font-medium text-white">Post Dilemma</a>
         </header>
 
         <section className="mb-6 text-center">
