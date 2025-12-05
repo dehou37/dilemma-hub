@@ -31,46 +31,61 @@ export default function RegisterPage() {
   }
 
   return (
-    <div style={{ maxWidth: 420, margin: "4rem auto" }}>
-      <h1>Register</h1>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: 8 }}>
-          <label>Username</label>
-          <input
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            style={{ width: "100%" }}
-          />
+    <div className="min-h-[70vh] flex items-center justify-center px-4">
+      <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-md">
+        <div className="mb-6 text-center">
+          <h2 className="text-2xl font-semibold">Create your account</h2>
+          <p className="text-sm text-zinc-500">Join Ethical Forum to share and discuss dilemmas</p>
         </div>
-        <div style={{ marginBottom: 8 }}>
-          <label>Email</label>
-          <input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            type="email"
-            required
-            style={{ width: "100%" }}
-          />
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="mb-1 block text-sm font-medium">Username</label>
+            <input
+              className="w-full rounded-md border px-3 py-2 text-sm"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium">Email</label>
+            <input
+              className="w-full rounded-md border px-3 py-2 text-sm"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              type="email"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium">Password</label>
+            <input
+              className="w-full rounded-md border px-3 py-2 text-sm"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              type="password"
+              required
+            />
+          </div>
+
+          {error && <div className="text-sm text-red-600">{error}</div>}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-md bg-amber-500 px-4 py-2 text-sm font-medium text-white hover:bg-amber-600 disabled:opacity-60"
+          >
+            {loading ? "Creating account..." : "Create account"}
+          </button>
+        </form>
+
+        <div className="mt-4 text-center text-sm text-zinc-600">
+          Already have an account? <a href="/login" className="text-amber-600">Sign in</a>
         </div>
-        <div style={{ marginBottom: 8 }}>
-          <label>Password</label>
-          <input
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            type="password"
-            required
-            style={{ width: "100%" }}
-          />
-        </div>
-        {error && <div style={{ color: "red", marginBottom: 8 }}>{error}</div>}
-        <button type="submit" disabled={loading}>
-          {loading ? "Registering..." : "Register"}
-        </button>
-      </form>
-      <p style={{ marginTop: 12 }}>
-        Already have an account? <a href="/login">Login</a>
-      </p>
+      </div>
     </div>
   );
 }

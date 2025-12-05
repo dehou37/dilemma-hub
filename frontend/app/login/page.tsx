@@ -30,37 +30,51 @@ export default function LoginPage() {
   }
 
   return (
-    <div style={{ maxWidth: 420, margin: "4rem auto" }}>
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: 8 }}>
-          <label>Email</label>
-          <input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            type="email"
-            required
-            style={{ width: "100%" }}
-          />
+    <div className="min-h-[70vh] flex items-center justify-center px-4">
+      <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-md">
+        <div className="mb-6 text-center">
+          <h2 className="text-2xl font-semibold">Welcome back</h2>
+          <p className="text-sm text-zinc-500">Sign in to continue to Ethical Forum</p>
         </div>
-        <div style={{ marginBottom: 8 }}>
-          <label>Password</label>
-          <input
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            type="password"
-            required
-            style={{ width: "100%" }}
-          />
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="mb-1 block text-sm font-medium">Email</label>
+            <input
+              className="w-full rounded-md border px-3 py-2 text-sm"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              type="email"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium">Password</label>
+            <input
+              className="w-full rounded-md border px-3 py-2 text-sm"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              type="password"
+              required
+            />
+          </div>
+
+          {error && <div className="text-sm text-red-600">{error}</div>}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-md bg-amber-500 px-4 py-2 text-sm font-medium text-white hover:bg-amber-600 disabled:opacity-60"
+          >
+            {loading ? "Signing in..." : "Sign in"}
+          </button>
+        </form>
+
+        <div className="mt-4 text-center text-sm text-zinc-600">
+          Don’t have an account? <a href="/register" className="text-amber-600">Create one</a>
         </div>
-        {error && <div style={{ color: "red", marginBottom: 8 }}>{error}</div>}
-        <button type="submit" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
-        </button>
-      </form>
-      <p style={{ marginTop: 12 }}>
-        Don’t have an account? <a href="/register">Register</a>
-      </p>
+      </div>
     </div>
   );
 }
