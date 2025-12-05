@@ -13,51 +13,103 @@ const usernames = [
   "peggy", "quinn", "rudy", "sybil", "trent"
 ];
 
-const dilemmaTitles = [
-  "Is it ethical to lie to protect someone's feelings?",
-  "Should I report a coworker who is taking credit for my work?",
-  "Is it okay to use AI-generated content without attribution?",
-  "Should I keep a found wallet with money inside?",
-  "Is it wrong to cheat to get a scholarship?",
-  "Should I intervene if I see bullying online?",
-  "Is it okay to secretly monitor employees at work?",
-  "Should I share confidential information for a greater good?",
-  "Is it ethical to manipulate someone for their own benefit?",
-  "Should I donate less to charity to save for my family?",
-  "Is it okay to lie on a resume to get a job?",
-  "Should I break a promise to avoid hurting someone?",
-  "Is it ethical to download paid content for free?",
-  "Should I accept a gift from a client at work?",
-  "Is it wrong to keep a secret that could harm someone?",
-  "Should I prioritize friends over strangers in emergencies?",
-  "Is it ethical to eat meat knowing the environmental impact?",
-  "Should I report a mistake I didn’t cause at work?",
-  "Is it okay to bend rules for someone in need?",
-  "Should I confront someone about their offensive behavior?"
-];
+const dilemmasByCategory: Record<string, { title: string; description: string }[]> = {
+  ETHICS: [
+    {
+      title: "Is it ethical to lie to protect someone's feelings?",
+      description: "Consider a situation where telling the truth might hurt someone emotionally.",
+    },
+    {
+      title: "Is it ethical to manipulate someone for their own benefit?",
+      description: "Manipulating someone could help them, but is it morally right?",
+    },
+    {
+      title: "Is it wrong to keep a secret that could harm someone?",
+      description: "Keeping a harmful secret: self-protection or unethical?",
+    },
+  ],
+  TECHNOLOGY: [
+    {
+      title: "Is it okay to use AI-generated content without attribution?",
+      description: "AI tools can generate content easily, but is it ethical to claim it as your own?",
+    },
+    {
+      title: "Is it ethical to download paid content for free?",
+      description: "Accessing paid content without paying could save money but is it ethical?",
+    },
+  ],
+  PERSONAL: [
+    {
+      title: "Should I keep a found wallet with money inside?",
+      description: "You found a wallet on the street. What should you do?",
+    },
+    {
+      title: "Should I break a promise to avoid hurting someone?",
+      description: "Breaking a promise might avoid emotional harm. Should you do it?",
+    },
+    {
+      title: "Should I prioritize friends over strangers in emergencies?",
+      description: "Prioritizing loved ones over strangers can save lives. Is it ethical?",
+    },
+  ],
+  WORK: [
+    {
+      title: "Should I report a coworker who is taking credit for my work?",
+      description: "You notice someone is taking credit for your efforts and it affects your career.",
+    },
+    {
+      title: "Should I report a mistake I didn’t cause at work?",
+      description: "Reporting a mistake not caused by you can affect workplace trust.",
+    },
+    {
+      title: "Is it okay to secretly monitor employees at work?",
+      description: "Monitoring employees without consent can prevent issues but violates privacy.",
+    },
+  ],
+  POLITICS: [
+    {
+      title: "Should I share confidential information for a greater good?",
+      description: "Sharing confidential info might help others. Is it worth it?",
+    },
+  ],
+  LIFESTYLE: [
+    {
+      title: "Is it ethical to eat meat knowing the environmental impact?",
+      description: "Eating meat impacts the environment. Should personal choice prevail?",
+    },
+    {
+      title: "Should I donate less to charity to save for my family?",
+      description: "Charity vs. family expenses: how should one decide?",
+    },
+  ],
+  OTHER: [
+    {
+      title: "Should I intervene if I see bullying online?",
+      description: "You witness cyberbullying. Should you step in?",
+    },
+    {
+      title: "Is it okay to bend rules for someone in need?",
+      description: "Bending rules for a good cause: justified or wrong?",
+    },
+    {
+      title: "Should I confront someone about their offensive behavior?",
+      description: "Confronting offensive behavior may hurt relationships. Should you do it?",
+    },
+  ],
+};
 
-const dilemmaDescriptions = [
-  "Consider a situation where telling the truth might hurt someone emotionally.",
-  "You notice someone is taking credit for your efforts and it affects your career.",
-  "AI tools can generate content easily, but is it ethical to claim it as your own?",
-  "You found a wallet on the street. What should you do?",
-  "Cheating may help you get ahead academically, but is it justified?",
-  "You witness cyberbullying. Should you step in?",
-  "Monitoring employees without consent can prevent issues but violates privacy.",
-  "Sharing confidential info might help others. Is it worth it?",
-  "Manipulating someone could help them, but is it morally right?",
-  "Charity vs. family expenses: how should one decide?",
-  "Lying on a resume could land a job. Is it justifiable?",
-  "Breaking a promise might avoid emotional harm. Should you do it?",
-  "Accessing paid content without paying could save money but is it ethical?",
-  "Accepting gifts can influence decisions. Is it appropriate?",
-  "Keeping a harmful secret: self-protection or unethical?",
-  "Prioritizing loved ones over strangers can save lives. Is it ethical?",
-  "Eating meat impacts the environment. Should personal choice prevail?",
-  "Reporting a mistake not caused by you can affect workplace trust.",
-  "Bending rules for a good cause: justified or wrong?",
-  "Confronting offensive behavior may hurt relationships. Should you do it?"
-];
+// Flatten and use up to 20 dilemmas (preserving variety across categories)
+const dilemmasData: { title: string; description: string; category: string }[] = [];
+for (const cat of Object.keys(dilemmasByCategory)) {
+  for (const item of dilemmasByCategory[cat]) {
+    dilemmasData.push({ title: item.title, description: item.description, category: cat });
+  }
+}
+
+// Ensure we have at least 20 items; if not, repeat from start
+while (dilemmasData.length < 20) {
+  dilemmasData.push(...dilemmasData.slice(0, 20 - dilemmasData.length));
+}
 
 const categories = [
   "ETHICS",
@@ -120,13 +172,14 @@ async function main() {
   // 2️⃣ Dilemmas
   // ----------------------
   const dilemmas = [];
-  for (let i = 0; i < dilemmaTitles.length; i++) {
+  for (let i = 0; i < 20; i++) {
+    const d = dilemmasData[i];
     const dilemma = await prisma.dilemma.create({
       data: {
-        title: dilemmaTitles[i],
-        description: dilemmaDescriptions[i],
+        title: d.title,
+        description: d.description,
         options: ["Option A", "Option B", "Option C"],
-        category: categories[i % categories.length],
+        category: d.category,
         authorId: users[i % users.length].id,
       },
     });
