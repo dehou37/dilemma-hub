@@ -34,13 +34,13 @@ export default function RegisterPage() {
     <div className="min-h-[70vh] flex items-center justify-center px-4">
       <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-md">
         <div className="mb-6 text-center">
-          <h2 className="text-2xl font-semibold">Create your account</h2>
+          <h2 className="text-2xl font-semibold text-black">Create your account</h2>
           <p className="text-sm text-zinc-500">Join Ethical Forum to share and discuss dilemmas</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-medium">Username</label>
+            <label className="mb-1 block text-sm font-medium text-black">Username</label>
             <input
               className="w-full rounded-md border px-3 py-2 text-sm"
               value={username}
@@ -50,7 +50,7 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium">Email</label>
+            <label className="mb-1 block text-sm font-medium text-black">Email</label>
             <input
               className="w-full rounded-md border px-3 py-2 text-sm"
               value={email}
@@ -61,7 +61,7 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium">Password</label>
+            <label className="mb-1 block text-sm font-medium text-black">Password</label>
             <input
               className="w-full rounded-md border px-3 py-2 text-sm"
               value={password}
@@ -76,7 +76,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-md bg-amber-500 px-4 py-2 text-sm font-medium text-white hover:bg-amber-600 disabled:opacity-60"
+            className="w-full rounded-md bg-amber-500 px-4 py-2 text-sm font-medium text-black hover:bg-amber-600 disabled:opacity-60"
           >
             {loading ? "Creating account..." : "Create account"}
           </button>
