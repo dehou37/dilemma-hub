@@ -16,12 +16,12 @@ export const getDilemmaById = async (req: Request, res: Response) => {
 };
 
 export const createDilemma = async (req: Request, res: Response) => {
-  const { title, description, options } = req.body;
+  const { title, description, options, category } = req.body;
   const authorId = (req as any).user?.id;
   if (!authorId) return res.status(401).json({ error: "Authentication required" });
 
   const dilemma = await prisma.dilemma.create({
-    data: { title, description, options, authorId },
+    data: { title, description, options, category, authorId },
   });
   res.json(dilemma);
 };

@@ -21,12 +21,23 @@ model Dilemma {
   id          String    @id @default(cuid())
   title       String
   description String
+  category    Category  @default(OTHER)
   options     String[]
   author      User      @relation(fields: [authorId], references: [id])
   authorId    String
   votes       Vote[]
   comments    Comment[]
   createdAt   DateTime  @default(now())
+}
+
+enum Category {
+  ETHICS
+  TECHNOLOGY
+  PERSONAL
+  WORK
+  POLITICS
+  LIFESTYLE
+  OTHER
 }
 
 model Vote {

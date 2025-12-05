@@ -59,6 +59,16 @@ const dilemmaDescriptions = [
   "Confronting offensive behavior may hurt relationships. Should you do it?"
 ];
 
+const categories = [
+  "ETHICS",
+  "TECHNOLOGY",
+  "PERSONAL",
+  "WORK",
+  "POLITICS",
+  "LIFESTYLE",
+  "OTHER",
+];
+
 const commentContents = [
   "I would probably do this differently.",
   "Interesting perspective!",
@@ -110,6 +120,7 @@ async function main() {
         title: dilemmaTitles[i],
         description: dilemmaDescriptions[i],
         options: ["Option A", "Option B", "Option C"],
+        category: categories[i % categories.length],
         authorId: users[i % users.length].id,
       },
     });
