@@ -93,6 +93,12 @@ const commentContents = [
 ];
 
 async function main() {
+  // Clear existing data to allow re-running seed without unique constraint errors
+  await prisma.vote.deleteMany();
+  await prisma.comment.deleteMany();
+  await prisma.dilemma.deleteMany();
+  await prisma.user.deleteMany();
+
   // ----------------------
   // 1️⃣ Users
   // ----------------------
