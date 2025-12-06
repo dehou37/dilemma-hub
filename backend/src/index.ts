@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import authRoutes from "./routes/auth.ts";
-import googleAuthRoutes from "./routes/googleAuth.ts";
 import dilemmaRoutes from "./routes/dilemmas.ts";
 import voteRoutes from "./routes/votes.ts";
 import commentRoutes from "./routes/comments.ts";
@@ -28,7 +27,6 @@ app.get("/", (req, res) => {
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/auth/google", googleAuthRoutes);
 app.use("/api/dilemmas", dilemmaRoutes);
 app.use("/api/votes", voteRoutes);
 app.use("/api/comments", commentRoutes);
