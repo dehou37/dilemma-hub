@@ -1,5 +1,7 @@
 "use client";
 import { useState } from "react";
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
 
 export default function RegisterPage() {
   const [username, setUsername] = useState("");
@@ -81,6 +83,27 @@ export default function RegisterPage() {
             {loading ? "Creating account..." : "Create account"}
           </button>
         </form>
+
+        <div className="my-4 flex items-center gap-3">
+          <div className="flex-1 border-t"></div>
+          <span className="text-xs text-zinc-500">or</span>
+          <div className="flex-1 border-t"></div>
+        </div>
+
+        <div className="flex justify-center">
+          <GoogleLogin onSuccess={(credentialResponse: any) => {
+            const decoded: any = jwtDecode(credentialResponse.credential);
+            fetch("http://localhost:5000/api/auth/google/callback", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              credentials: "include",
+              body: JSON.stringify({ email: decoded.email, name: decoded.name, googleId: decoded.sub }),
+            })
+              .then(r => r.json())
+              .then(data => { if (data.user) window.location.href = "/"; else setError(data.error); })
+              .catch(() => setError("Google sign-up failed"));
+          }} onError={() => setError("Google sign-up failed")} />
+        </div>
 
         <div className="mt-4 text-center text-sm text-zinc-600">
           Already have an account? <a href="/login" className="text-amber-600">Sign in</a>
