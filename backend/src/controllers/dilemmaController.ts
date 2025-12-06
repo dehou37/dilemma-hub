@@ -11,7 +11,17 @@ export const getAllDilemmas = async (req: Request, res: Response) => {
 
 export const getDilemmaById = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const dilemma = await prisma.dilemma.findUnique({ where: { id }, include: { votes: true, comments: true } });
+  const dilemma = await prisma.dilemma.findUnique({
+    where: { id },
+    include: {
+      author: { select: { id: true, username: true, email: true } },
+      votes: { include: { user: { select: { id: true, username: true } } } },
+      comments: {
+        include: { user: { select: { id: true, username: true } } },
+        orderBy: { createdAt: "desc" },
+      },
+    },
+  });
   res.json(dilemma);
 };
 

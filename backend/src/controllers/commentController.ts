@@ -6,7 +6,10 @@ export const addComment = async (req: Request, res: Response) => {
   const userId = (req as any).user?.id;
   if (!userId) return res.status(401).json({ error: "Authentication required" });
 
-  const comment = await prisma.comment.create({ data: { userId, dilemmaId, content } });
+  const comment = await prisma.comment.create({
+    data: { userId, dilemmaId, content },
+    include: { user: { select: { id: true, username: true } } },
+  });
   res.json(comment);
 };
 
@@ -20,4 +23,14 @@ export const getCommentById = async (req: Request, res: Response) => {
   const comment = await prisma.comment.findUnique({ where: { id } });
   if (!comment) return res.status(404).json({ error: "Not found" });
   res.json(comment);
+};
+
+export const getCommentsByDilemmaId = async (req: Request, res: Response) => {
+  const { dilemmaId } = req.params;
+  const comments = await prisma.comment.findMany({
+    where: { dilemmaId },
+    include: { user: { select: { id: true, username: true, email: true } } },
+    orderBy: { createdAt: "desc" },
+  });
+  res.json(comments);
 };
