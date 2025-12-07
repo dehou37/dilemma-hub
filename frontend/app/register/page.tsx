@@ -42,7 +42,7 @@ export default function RegisterPage() {
           <div>
             <label className="mb-1 block text-sm font-medium text-black">Username</label>
             <input
-              className="w-full rounded-md border px-3 py-2 text-sm"
+              className="w-full rounded-md border px-3 py-2 text-sm "
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required

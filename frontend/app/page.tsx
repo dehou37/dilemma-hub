@@ -198,9 +198,10 @@ export default function Home() {
                 const colors = getCategoryColor(d.category);
 
                 return (
-                  <article
+                  <a
                     key={d.id}
-                    className="rounded-lg bg-white p-4 shadow-sm"
+                    href={`/dilemma/${d.id}`}
+                    className="block rounded-lg bg-white p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
                   >
                     <div className="flex items-start justify-between">
                       <div>
@@ -235,7 +236,7 @@ export default function Home() {
                         </div>
                       </div>
                     </div>
-                  </article>
+                  </a>
                 );
               })}
 

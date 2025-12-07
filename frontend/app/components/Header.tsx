@@ -31,6 +31,18 @@ export default function Header() {
           
           {user ? (
             <div className="flex items-center gap-3">
+              <a
+                href="/create"
+                className="px-4 py-2 bg-amber-500 text-white rounded-lg text-sm font-medium hover:bg-amber-600"
+              >
+                + Post Dilemma
+              </a>
+              <a
+                href="/my-posts"
+                className="text-sm text-zinc-700 hover:text-amber-600 font-medium"
+              >
+                My Posts
+              </a>
               <span className="text-sm">Hi, <span className="font-medium">{user.username}</span></span>
               <button
                 onClick={() => logout()}
@@ -41,7 +53,7 @@ export default function Header() {
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              <a href="/register" className="rounded-md bg-white px-3 py-1 text-sm text-amber-600 shadow-sm">Login/Sign Up</a>
+              <a href="/login" className="rounded-md bg-white px-3 py-1 text-sm text-amber-600 shadow-sm">Login/Sign Up</a>
             </div>
           )}
         </nav>

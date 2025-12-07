@@ -29,4 +29,8 @@ h2, label, p {
   color: black;
 }
 
+input,span {
+  color: black !important;
+}
+
 
