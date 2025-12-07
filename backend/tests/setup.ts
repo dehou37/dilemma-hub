@@ -1,14 +1,10 @@
-import { testDb } from "./testUtils";
+// Shared setup - runs once before all test files
+// NO database cleanup - preserves existing data
 
-// Global setup: runs once before all test files
 beforeAll(async () => {
-  console.log("🧹 Cleaning test database...");
-  await testDb.cleanAll();
+  console.log("🧪 Starting tests (database data preserved)");
 });
 
-// Global cleanup: runs once after all test files
 afterAll(async () => {
-  console.log("🔌 Disconnecting from database...");
-  await testDb.cleanAll();
-  await testDb.disconnect();
+  console.log("✅ Tests complete (database data preserved)");
 });

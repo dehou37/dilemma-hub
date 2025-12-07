@@ -7,8 +7,7 @@
     "dev": "nodemon --exec node --loader ts-node/esm src/index.ts",
     "seed": "ts-node prisma/seed.ts",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand",
-    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch --runInBand",
-    "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage --runInBand"
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch --runInBand"
   },
   "keywords": [],
   "author": "",
