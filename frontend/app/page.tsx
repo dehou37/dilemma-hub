@@ -35,6 +35,8 @@ export default function Home() {
   const [active, setActive] = useState("All");
   const [categories, setCategories] = useState<string[]>([]);
   const [timeFilter, setTimeFilter] = useState("ALL"); // Time filter
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchInput, setSearchInput] = useState("");
 
   // ✅ Fetch dilemmas
   useEffect(() => {
@@ -42,7 +44,10 @@ export default function Home() {
 
     (async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/dilemmas");
+        const url = searchQuery
+          ? `http://localhost:5000/api/dilemmas?search=${encodeURIComponent(searchQuery)}`
+          : "http://localhost:5000/api/dilemmas";
+        const res = await fetch(url);
         const data = await res.json();
 
         if (!mounted) return;
@@ -73,7 +78,7 @@ export default function Home() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [searchQuery]);
 
   // ✅ Time constants in milliseconds
   const MS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -127,6 +132,18 @@ export default function Home() {
 
   const visible = applyFilters(dilemmas);
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSearchQuery(searchInput);
+    setLoading(true);
+  };
+
+  const handleClearSearch = () => {
+    setSearchInput("");
+    setSearchQuery("");
+    setLoading(true);
+  };
+
   return (
     <div className="min-h-screen bg-zinc-50">
       <main className="mx-auto max-w-4xl px-6 py-10">
@@ -139,6 +156,41 @@ export default function Home() {
             A community for exploring life's most challenging moral questions.
             Share dilemmas, debate perspectives, and discover where you stand.
           </p>
+        </section>
+
+        {/* SEARCH BAR */}
+        <section className="mb-6">
+          <form onSubmit={handleSearch} className="relative">
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="Search dilemmas by title, description, or author..."
+              className="w-full px-4 py-3 pr-24 rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
+            />
+            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-2">
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={handleClearSearch}
+                  className="px-3 py-1 text-xs text-zinc-600 hover:text-zinc-900"
+                >
+                  Clear
+                </button>
+              )}
+              <button
+                type="submit"
+                className="px-4 py-1 bg-amber-500 text-white rounded-md text-sm font-medium hover:bg-amber-600"
+              >
+                Search
+              </button>
+            </div>
+          </form>
+          {searchQuery && (
+            <p className="mt-2 text-sm text-zinc-600">
+              Searching for: <span className="font-medium">"{searchQuery}"</span>
+            </p>
+          )}
         </section>
 
         {/* CATEGORY FILTERS */}
@@ -248,9 +300,25 @@ export default function Home() {
                 );
               })}
 
-              {visible.length === 0 && (
-                <div className="text-center text-sm text-zinc-500">
-                  No dilemmas found for this filter.
+              {visible.length === 0 && !loading && (
+                <div className="text-center py-12">
+                  <div className="text-5xl mb-4">🔍</div>
+                  <h3 className="text-lg font-semibold text-zinc-800 mb-2">
+                    {searchQuery ? "No results found" : "No dilemmas found"}
+                  </h3>
+                  <p className="text-sm text-zinc-500 mb-4">
+                    {searchQuery
+                      ? `No dilemmas match "${searchQuery}". Try a different search term.`
+                      : "No dilemmas found for this filter."}
+                  </p>
+                  {searchQuery && (
+                    <button
+                      onClick={handleClearSearch}
+                      className="text-amber-600 hover:text-amber-700 text-sm font-medium"
+                    >
+                      Clear search
+                    </button>
+                  )}
                 </div>
               )}
             </div>

@@ -2,7 +2,18 @@ import type { Request, Response } from "express";
 import prisma from "../prisma.ts";
 
 export const getAllDilemmas = async (req: Request, res: Response) => {
+  const { search } = req.query;
+
   const dilemmas = await prisma.dilemma.findMany({
+    where: search
+      ? {
+          OR: [
+            { title: { contains: search as string, mode: "insensitive" } },
+            { description: { contains: search as string, mode: "insensitive" } },
+            { author: { username: { contains: search as string, mode: "insensitive" } } },
+          ],
+        }
+      : undefined,
     orderBy: { createdAt: "desc" },
     include: {
       author: { select: { id: true, username: true, email: true } },
