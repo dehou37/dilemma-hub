@@ -86,12 +86,12 @@ export default function MyPostsPage() {
             <p className="text-zinc-600 mb-6">
               You haven't created any dilemmas yet. Share your first moral question with the community!
             </p>
-            <button
-              onClick={() => router.push("/")}
-              className="px-6 py-2 bg-amber-500 text-white rounded-lg font-medium hover:bg-amber-600"
-            >
-              Post a Dilemma
-            </button>
+            <a
+                href="/create"
+                className="px-4 py-2 bg-amber-500 text-white rounded-lg text-sm font-medium hover:bg-amber-600"
+              >
+                + Post Dilemma
+              </a>
           </div>
         ) : (
           <div className="space-y-4">
