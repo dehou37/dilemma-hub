@@ -232,7 +232,7 @@ export default function DilemmaPage() {
 
           {/* Meta info */}
           <div className="text-sm text-zinc-500 mb-8">
-            Posted {new Date(dilemma.createdAt).toLocaleDateString()} • {totalVotes} votes • {comments.length} comments
+            Posted by <span className="font-medium text-zinc-700">{dilemma.author?.username || "Anonymous"}</span> on {new Date(dilemma.createdAt).toLocaleDateString()} • {totalVotes} votes • {comments.length} comments
           </div>
 
           {/* Voting Options */}

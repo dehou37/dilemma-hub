@@ -23,6 +23,7 @@ type Dilemma = {
   description: string;
   category?: string;
   authorId?: string;
+  author?: { id: string; username: string; email: string };
   votes?: any[];
   comments?: any[];
   createdAt: string;
@@ -57,7 +58,7 @@ export default function Home() {
             )
           )
         ).filter(Boolean);
-
+        
         const hasOther = cats.includes("OTHER");
         const nonOther = cats.filter((c) => c !== "OTHER");
 
@@ -196,7 +197,7 @@ export default function Home() {
             <div className="space-y-4">
               {visible.map((d) => {
                 const colors = getCategoryColor(d.category);
-
+                console.log(d);
                 return (
                   <a
                     key={d.id}
@@ -224,6 +225,11 @@ export default function Home() {
                         </p>
 
                         <div className="mt-3 flex items-center gap-4 text-sm text-zinc-500">
+                          <span className="font-medium text-zinc-700">
+                            Created by{" "} 
+                            {d.author?.username || "Anonymous"}
+                          </span>
+                          <span>•</span>
                           <span>
                             {d.createdAt
                               ? new Date(d.createdAt).toLocaleDateString(
@@ -231,7 +237,9 @@ export default function Home() {
                                 )
                               : "—"}
                           </span>
+                          <span>•</span>
                           <span>{d.votes?.length ?? 0} votes</span>
+                          <span>•</span>
                           <span>{d.comments?.length ?? 0} comments</span>
                         </div>
                       </div>

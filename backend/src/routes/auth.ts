@@ -113,4 +113,85 @@ router.post("/logout", (_req, res) => {
   res.json({ ok: true });
 });
 
+// Update profile
+router.put("/update-profile", authOptional, async (req, res) => {
+  const userId = (req as any).user?.id;
+  if (!userId) return res.status(401).json({ error: "Authentication required" });
+
+  const { username, email } = req.body;
+
+  if (!username || !email) {
+    return res.status(400).json({ error: "Username and email are required" });
+  }
+
+  try {
+    // Check if username or email is already taken by another user
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        OR: [{ username }, { email }],
+        NOT: { id: userId },
+      },
+    });
+
+    if (existingUser) {
+      if (existingUser.username === username) {
+        return res.status(400).json({ error: "Username already taken" });
+      }
+      if (existingUser.email === email) {
+        return res.status(400).json({ error: "Email already taken" });
+      }
+    }
+
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: { username, email },
+      select: { id: true, username: true, email: true },
+    });
+
+    res.json({ user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to update profile" });
+  }
+});
+
+// Change password
+router.put("/change-password", authOptional, async (req, res) => {
+  const userId = (req as any).user?.id;
+  if (!userId) return res.status(401).json({ error: "Authentication required" });
+
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ error: "Current and new passwords are required" });
+  }
+
+  if (newPassword.length < 6) {
+    return res.status(400).json({ error: "New password must be at least 6 characters" });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    // Verify current password
+    const valid = await argon2.verify(user.password, currentPassword);
+    if (!valid) {
+      return res.status(401).json({ error: "Current password is incorrect" });
+    }
+
+    // Hash and update new password
+    const hashedPassword = await argon2.hash(newPassword);
+    await prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
+    });
+
+    res.json({ ok: true, message: "Password changed successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to change password" });
+  }
+});
+
 export default router;

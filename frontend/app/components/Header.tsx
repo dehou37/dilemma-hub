@@ -43,6 +43,12 @@ export default function Header() {
               >
                 My Posts
               </a>
+              <a
+                href="/profile"
+                className="text-sm text-zinc-700 hover:text-amber-600 font-medium"
+              >
+                Profile
+              </a>
               <span className="text-sm">Hi, <span className="font-medium">{user.username}</span></span>
               <button
                 onClick={() => logout()}

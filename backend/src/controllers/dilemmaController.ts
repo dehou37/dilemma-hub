@@ -4,7 +4,11 @@ import prisma from "../prisma.ts";
 export const getAllDilemmas = async (req: Request, res: Response) => {
   const dilemmas = await prisma.dilemma.findMany({
     orderBy: { createdAt: "desc" },
-    include: { votes: true, comments: true },
+    include: {
+      author: { select: { id: true, username: true, email: true } },
+      votes: true,
+      comments: true,
+    },
   });
   res.json(dilemmas);
 };
@@ -42,7 +46,11 @@ export const getMyDilemmas = async (req: Request, res: Response) => {
   const dilemmas = await prisma.dilemma.findMany({
     where: { authorId: userId },
     orderBy: { createdAt: "desc" },
-    include: { votes: true, comments: true },
+    include: {
+      author: { select: { id: true, username: true, email: true } },
+      votes: true,
+      comments: true,
+    },
   });
   res.json(dilemmas);
 };
