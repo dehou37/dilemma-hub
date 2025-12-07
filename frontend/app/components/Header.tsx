@@ -22,7 +22,7 @@ export default function Header() {
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-md bg-slate-900 text-white flex items-center justify-center font-semibold">⚖️</div>
           <div>
-            <a href="/" className="text-lg font-bold">Ethical Forum</a>
+            <a href="/" className="text-lg font-bold text-black">Ethical Forum</a>
             <div className="text-xs text-zinc-500">Explore moral questions</div>
           </div>
         </div>

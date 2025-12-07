@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getAllDilemmas, getDilemmaById, createDilemma, getDilemmasByUserId, getMyDilemmas } from "../controllers/dilemmaController.ts";
+import { getAllDilemmas, getDilemmaById, createDilemma, getDilemmasByUserId, getMyDilemmas, updateDilemma, deleteDilemma } from "../controllers/dilemmaController.ts";
 import authRequired from "../middleware/authRequired.ts";
 
 const router = Router();
@@ -12,5 +12,9 @@ router.get("/user/:userId", getDilemmasByUserId);
 router.get("/:id", getDilemmaById);
 // Creating a dilemma requires authentication
 router.post("/", authRequired, createDilemma);
+// Update dilemma (authenticated, must be author)
+router.put("/:id", authRequired, updateDilemma);
+// Delete dilemma (authenticated, must be author)
+router.delete("/:id", authRequired, deleteDilemma);
 
 export default router;

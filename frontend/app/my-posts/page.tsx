@@ -32,6 +32,7 @@ export default function MyPostsPage() {
   const [dilemmas, setDilemmas] = useState<Dilemma[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     // Check if user is logged in and fetch their posts
@@ -58,6 +59,35 @@ export default function MyPostsPage() {
         setLoading(false);
       });
   }, [router]);
+
+  const handleDelete = async (id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!confirm("Are you sure you want to delete this dilemma? This action cannot be undone.")) {
+      return;
+    }
+
+    setDeletingId(id);
+    try {
+      const res = await fetch(`http://localhost:5000/api/dilemmas/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        // Remove from local state
+        setDilemmas(dilemmas.filter((d) => d.id !== id));
+      } else {
+        const data = await res.json();
+        alert(data.error || "Failed to delete dilemma");
+      }
+    } catch (err) {
+      alert("Failed to delete dilemma");
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-zinc-50 py-8">
@@ -99,12 +129,11 @@ export default function MyPostsPage() {
               const categoryStyle = getCategoryStyle(dilemma.category);
               
               return (
-                <a
+                <div
                   key={dilemma.id}
-                  href={`/dilemma/${dilemma.id}`}
-                  className="block bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
+                  className="bg-white rounded-lg shadow-md p-6"
                 >
-                  <div className="flex items-start justify-between">
+                  <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <span
@@ -115,15 +144,17 @@ export default function MyPostsPage() {
                         </span>
                       </div>
                       
-                      <h2 className="text-xl font-semibold text-zinc-900 mb-2">
-                        {dilemma.title}
-                      </h2>
+                      <a href={`/dilemma/${dilemma.id}`} className="block">
+                        <h2 className="text-xl font-semibold text-zinc-900 mb-2 hover:text-amber-600">
+                          {dilemma.title}
+                        </h2>
+                      </a>
                       
                       <p className="text-zinc-600 text-sm mb-4 line-clamp-2">
                         {dilemma.description}
                       </p>
 
-                      <div className="flex items-center gap-4 text-sm text-zinc-500">
+                      <div className="flex items-center gap-4 text-sm text-zinc-500 mb-4">
                         <span>
                           Posted {new Date(dilemma.createdAt).toLocaleDateString()}
                         </span>
@@ -134,7 +165,7 @@ export default function MyPostsPage() {
                       </div>
 
                       {/* Show options */}
-                      <div className="mt-4 space-y-2">
+                      <div className="space-y-2">
                         {dilemma.options.map((option, idx) => (
                           <div
                             key={idx}
@@ -145,8 +176,25 @@ export default function MyPostsPage() {
                         ))}
                       </div>
                     </div>
+
+                    {/* Action buttons */}
+                    <div className="flex flex-col gap-2">
+                      <a
+                        href={`/edit/${dilemma.id}`}
+                        className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium hover:bg-blue-600 text-center"
+                      >
+                        Edit
+                      </a>
+                      <button
+                        onClick={(e) => handleDelete(dilemma.id, e)}
+                        disabled={deletingId === dilemma.id}
+                        className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm font-medium hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {deletingId === dilemma.id ? "Deleting..." : "Delete"}
+                      </button>
+                    </div>
                   </div>
-                </a>
+                </div>
               );
             })}
           </div>
