@@ -21,7 +21,15 @@ export default function LoginPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Login failed");
-      // Server sets httpOnly cookies; frontend doesn't store tokens in localStorage
+      
+      // Store tokens in localStorage
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
+      if (data.refreshToken) {
+        localStorage.setItem("refreshToken", data.refreshToken);
+      }
+      
       window.location.href = "/";
     } catch (err: any) {
       setError(err.message || "An error occurred");

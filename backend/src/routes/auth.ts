@@ -46,7 +46,11 @@ router.post("/register", async (req, res) => {
     setAccessCookie(res, accessToken);
     setRefreshCookie(res, refreshToken);
 
-    res.json({ user: { id: user.id, username: user.username, email: user.email } });
+    res.json({ 
+      user: { id: user.id, username: user.username, email: user.email },
+      token: accessToken,
+      refreshToken: refreshToken
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
@@ -69,7 +73,11 @@ router.post("/login", async (req, res) => {
     setAccessCookie(res, accessToken);
     setRefreshCookie(res, refreshToken);
 
-    res.json({ user: { id: user.id, username: user.username, email: user.email } });
+    res.json({ 
+      user: { id: user.id, username: user.username, email: user.email },
+      token: accessToken,
+      refreshToken: refreshToken
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
