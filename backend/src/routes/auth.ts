@@ -13,7 +13,7 @@ function setAccessCookie(res: any, token: string) {
   res.cookie("token", token, {
     httpOnly: true,
     secure: isProd,
-    sameSite: "lax",
+    sameSite: isProd ? "none" : "lax", // "none" required for cross-domain in production
     maxAge: 15 * 60 * 1000, // 15 minutes
   });
 }
@@ -23,7 +23,7 @@ function setRefreshCookie(res: any, token: string) {
   res.cookie("refreshToken", token, {
     httpOnly: true,
     secure: isProd,
-    sameSite: "lax",
+    sameSite: isProd ? "none" : "lax", // "none" required for cross-domain in production
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 }
