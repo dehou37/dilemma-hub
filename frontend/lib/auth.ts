@@ -22,8 +22,10 @@ export async function logout() {
       method: "POST",
       credentials: "include",
     });
+    // Force reload to clear any cached user state
+    window.location.href = "/";
   } catch (err) {
-    // ignore
+    // Even if logout fails, redirect to clear local state
+    window.location.href = "/";
   }
-  window.location.href = "/";
 }
