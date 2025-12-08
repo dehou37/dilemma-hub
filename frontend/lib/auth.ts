@@ -1,7 +1,9 @@
+import { API_URL } from "./config";
+
 export async function fetchCurrentUser(): Promise<any | null> {
   if (typeof window === "undefined") return null;
   try {
-    const res = await fetch("http://localhost:5000/api/auth/me", {
+    const res = await fetch(`${API_URL}/api/auth/me`, {
       method: "GET",
       credentials: "include",
     });
@@ -16,7 +18,7 @@ export async function fetchCurrentUser(): Promise<any | null> {
 export async function logout() {
   if (typeof window === "undefined") return;
   try {
-    await fetch("http://localhost:5000/api/auth/logout", {
+    await fetch(`${API_URL}/api/auth/logout`, {
       method: "POST",
       credentials: "include",
     });

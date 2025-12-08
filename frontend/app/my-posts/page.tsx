@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { API_URL } from "../../lib/config";
 
 type Dilemma = {
   id: string;
@@ -36,13 +37,13 @@ export default function MyPostsPage() {
 
   useEffect(() => {
     // Check if user is logged in and fetch their posts
-    fetch("http://localhost:5000/api/auth/me", { credentials: "include" })
+    fetch(`${API_URL}/api/auth/me`, { credentials: "include" })
       .then((r) => r.json())
       .then((data) => {
         if (data.user) {
           setCurrentUser(data.user);
           // Fetch user's dilemmas using the dedicated endpoint
-          return fetch("http://localhost:5000/api/dilemmas/my-posts", { credentials: "include" });
+          return fetch(`${API_URL}/api/dilemmas/my-posts`, { credentials: "include" });
         } else {
           router.push("/login");
           throw new Error("Not authenticated");
@@ -70,7 +71,7 @@ export default function MyPostsPage() {
 
     setDeletingId(id);
     try {
-      const res = await fetch(`http://localhost:5000/api/dilemmas/${id}`, {
+      const res = await fetch(`${API_URL}/api/dilemmas/${id}`, {
         method: "DELETE",
         credentials: "include",
       });

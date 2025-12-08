@@ -12,6 +12,7 @@ services:
       # Use your local Supabase database (update with your actual DATABASE_URL from .env)
       DATABASE_URL: ${DATABASE_URL}
       JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-in-production}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
       PORT: 5000
       NODE_ENV: production
     # Remove database dependency since using external database

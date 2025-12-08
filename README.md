@@ -32,8 +32,16 @@ docker-compose down
 Create `.env` file in root directory:
 
 ```env
-DATABASE_URL="your_postgresql_connection_string"
-JWT_SECRET="your_jwt_secret_key"
+DATABASE_URL="postgresql://user:password@localhost:5432/dilemma_hub"
+JWT_SECRET="your-super-secret-jwt-key-change-this"
+FRONTEND_URL="http://localhost:3000"
+NODE_ENV=development
+```
+
+Create `frontend/.env.local` file:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000
 ```
 
 ## Development (without Docker)

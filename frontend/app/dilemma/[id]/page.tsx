@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { API_URL } from "../../../lib/config";
 
 type User = {
   id: string;
@@ -67,7 +68,7 @@ export default function DilemmaPage() {
 
   // Fetch current user
   useEffect(() => {
-    fetch("http://localhost:5000/api/auth/me", { credentials: "include" })
+    fetch(`${API_URL}/api/auth/me`, { credentials: "include" })
       .then((r) => r.json())
       .then((data) => {
         if (data.user) setCurrentUser(data.user);
@@ -77,7 +78,7 @@ export default function DilemmaPage() {
 
   // Fetch dilemma
   useEffect(() => {
-    fetch(`http://localhost:5000/api/dilemmas/${id}`)
+    fetch(`${API_URL}/api/dilemmas/${id}`)
       .then((r) => r.json())
       .then((data) => {
         setDilemma(data);
@@ -96,7 +97,7 @@ export default function DilemmaPage() {
 
   // Fetch comments separately
   useEffect(() => {
-    fetch(`http://localhost:5000/api/comments/dilemma/${id}`)
+    fetch(`${API_URL}/api/comments/dilemma/${id}`)
       .then((r) => r.json())
       .then((data) => {
         setComments(data || []);
@@ -113,7 +114,7 @@ export default function DilemmaPage() {
     if (hasVoted) return;
 
     try {
-      const res = await fetch("http://localhost:5000/api/votes", {
+      const res = await fetch(`${API_URL}/api/votes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -124,7 +125,7 @@ export default function DilemmaPage() {
         setSelectedOption(optionIndex);
         setHasVoted(true);
         // Refresh dilemma to get updated vote counts
-        const updated = await fetch(`http://localhost:5000/api/dilemmas/${id}`).then((r) => r.json());
+        const updated = await fetch(`${API_URL}/api/dilemmas/${id}`).then((r) => r.json());
         setDilemma(updated);
       }
     } catch (err) {
@@ -142,7 +143,7 @@ export default function DilemmaPage() {
 
     setSubmittingComment(true);
     try {
-      const res = await fetch("http://localhost:5000/api/comments", {
+      const res = await fetch(`${API_URL}/api/comments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -152,10 +153,10 @@ export default function DilemmaPage() {
       if (res.ok) {
         setNewComment("");
         // Refresh comments to show new comment with user info
-        const updatedComments = await fetch(`http://localhost:5000/api/comments/dilemma/${id}`).then((r) => r.json());
+        const updatedComments = await fetch(`${API_URL}/api/comments/dilemma/${id}`).then((r) => r.json());
         setComments(updatedComments || []);
         // Also refresh dilemma to update comment count
-        const updatedDilemma = await fetch(`http://localhost:5000/api/dilemmas/${id}`).then((r) => r.json());
+        const updatedDilemma = await fetch(`${API_URL}/api/dilemmas/${id}`).then((r) => r.json());
         setDilemma(updatedDilemma);
       }
     } catch (err) {

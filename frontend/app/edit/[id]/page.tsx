@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { API_URL } from "../../../lib/config";
 
 const CATEGORIES = [
   "ETHICS",
@@ -39,7 +40,7 @@ export default function EditDilemmaPage() {
 
   useEffect(() => {
     // Check if user is logged in
-    fetch("http://localhost:5000/api/auth/me", { credentials: "include" })
+    fetch(`${API_URL}/api/auth/me`, { credentials: "include" })
       .then((r) => r.json())
       .then((data) => {
         if (data.user) {
@@ -55,7 +56,7 @@ export default function EditDilemmaPage() {
     if (!currentUser) return;
 
     // Fetch the dilemma
-    fetch(`http://localhost:5000/api/dilemmas/${id}`)
+    fetch(`${API_URL}/api/dilemmas/${id}`)
       .then((r) => r.json())
       .then((data) => {
         if (!data || !data.id) {
@@ -121,7 +122,7 @@ export default function EditDilemmaPage() {
 
     setSaving(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/dilemmas/${id}`, {
+      const res = await fetch(`${API_URL}/api/dilemmas/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

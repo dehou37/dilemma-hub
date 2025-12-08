@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { API_URL } from "../../lib/config";
 
 const CATEGORIES = [
   "ETHICS",
@@ -35,7 +36,7 @@ export default function CreateDilemmaPage() {
 
   useEffect(() => {
     // Check if user is logged in
-    fetch("http://localhost:5000/api/auth/me", { credentials: "include" })
+    fetch(`${API_URL}/api/auth/me`, { credentials: "include" })
       .then((r) => r.json())
       .then((data) => {
         if (data.user) {
@@ -86,7 +87,7 @@ export default function CreateDilemmaPage() {
 
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/dilemmas", {
+      const res = await fetch(`${API_URL}/api/dilemmas`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

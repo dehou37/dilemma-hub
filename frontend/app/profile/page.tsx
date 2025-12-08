@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { API_URL } from "../../lib/config";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -19,7 +20,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     // Fetch current user
-    fetch("http://localhost:5000/api/auth/me", { credentials: "include" })
+    fetch(`${API_URL}/api/auth/me`, { credentials: "include" })
       .then((r) => r.json())
       .then((data) => {
         if (data.user) {
@@ -54,7 +55,7 @@ export default function ProfilePage() {
 
     setSaving(true);
     try {
-      const res = await fetch("http://localhost:5000/api/auth/update-profile", {
+      const res = await fetch(`${API_URL}/api/auth/update-profile`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -101,7 +102,7 @@ export default function ProfilePage() {
 
     setSaving(true);
     try {
-      const res = await fetch("http://localhost:5000/api/auth/change-password", {
+      const res = await fetch(`${API_URL}/api/auth/change-password`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

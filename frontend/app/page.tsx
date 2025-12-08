@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { API_URL } from "../lib/config";
 
 // ✅ Fixed unique colors for each category
 const categoryColors: Record<string, { bg: string; text: string }> = {
@@ -45,8 +46,8 @@ export default function Home() {
     (async () => {
       try {
         const url = searchQuery
-          ? `http://localhost:5000/api/dilemmas?search=${encodeURIComponent(searchQuery)}`
-          : "http://localhost:5000/api/dilemmas";
+          ? `${API_URL}/api/dilemmas?search=${encodeURIComponent(searchQuery)}`
+          : `${API_URL}/api/dilemmas`;
         const res = await fetch(url);
         const data = await res.json();
 
