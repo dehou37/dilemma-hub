@@ -1,0 +1,33 @@
+# Docker
+node_modules
+npm-debug.log
+.dockerignore
+Dockerfile*
+docker-compose*
+
+# Git
+.git
+.gitignore
+
+# Environment
+.env
+.env.local
+.env*.local
+
+# Development
+coverage
+.vscode
+.idea
+
+# Build
+dist
+build
+.next
+
+# Testing
+tests
+*.test.ts
+jest.config.cjs
+
+# Misc
+README.md
