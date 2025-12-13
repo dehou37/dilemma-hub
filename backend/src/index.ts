@@ -7,6 +7,7 @@ import dilemmaRoutes from "./routes/dilemmas.ts";
 import voteRoutes from "./routes/votes.ts";
 import commentRoutes from "./routes/comments.ts";
 import authOptional from "./middleware/authOptional.ts";
+import prisma from "./prisma.ts";
 
 dotenv.config();
 
@@ -41,6 +42,27 @@ app.use(authOptional);
 
 app.get("/", (req, res) => {
   res.json({ ok: true, message: "Dilemma Hub API running" });
+});
+
+app.get("/health", async (req, res) => {
+  const healthCheck = {
+    uptime: process.uptime(),
+    status: "OK",
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || "development",
+    database: "checking...",
+  };
+
+  try {
+    // Check database connectivity
+    await prisma.$queryRaw`SELECT 1`;
+    healthCheck.database = "connected";
+    res.status(200).json(healthCheck);
+  } catch (error) {
+    healthCheck.status = "ERROR";
+    healthCheck.database = "disconnected";
+    res.status(503).json(healthCheck);
+  }
 });
 
 app.use("/api/auth", authRoutes);
