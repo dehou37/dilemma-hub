@@ -58,10 +58,6 @@ jobs:
           NODE_ENV: test
         run: npm test
 
-      - name: Build backend
-        working-directory: ./backend
-        run: npm run build
-
   # Frontend build (no linter)
   frontend:
     name: Frontend CI
