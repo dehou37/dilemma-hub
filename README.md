@@ -1,5 +1,8 @@
 # DillemmaHub
 
+https://dilemma-hub-ojkv.vercel.app/ 
+**Takes 5-10 minutes to load**
+
 A full-stack dilemma forum application with authentication, voting, and commenting features.
 
 ## Tech Stack
@@ -71,14 +74,6 @@ npm test
 ```
 
 All tests are non-destructive and preserve existing database data.
-
-## Deployment
-
-See `DOCKER.md` for comprehensive deployment guides for AWS and Azure.
-
-**Cost Estimates:**
-- AWS ECS: ~$65/month
-- Azure Container Apps: ~$50/month
 
 ## Features
 
