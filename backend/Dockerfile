@@ -31,4 +31,4 @@ COPY --from=builder /app/tsconfig.json ./
 EXPOSE 5000
 
 # Run migrations and start server
-CMD ["sh", "-c", "npx prisma migrate deploy && node --loader ts-node/esm src/index.ts"]
+CMD ["sh", "-c", "npx prisma migrate deploy && npx tsx src/index.ts"]
