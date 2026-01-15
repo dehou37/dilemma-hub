@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "nodemon --exec tsx src/index.ts",
     "build": "tsc --noEmit false --outDir dist",
-    "start": "node --loader ts-node/esm src/index.ts",
-    "seed": "node --loader ts-node/esm prisma/seed.ts",
+    "start": "tsx src/index.ts",
+    "seed": "tsx prisma/seed.ts",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand",
     "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch --runInBand"
   },
