@@ -35,26 +35,42 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [active, setActive] = useState("All");
   const [categories, setCategories] = useState<string[]>([]);
-  const [timeFilter, setTimeFilter] = useState("ALL"); // Time filter
+  const [timeFilter, setTimeFilter] = useState("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [searchInput, setSearchInput] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const ITEMS_PER_PAGE = 10;
 
-  // ✅ Fetch dilemmas
+  // ✅ Fetch dilemmas with pagination
   useEffect(() => {
     let mounted = true;
 
     (async () => {
       try {
-        const url = searchQuery
-          ? `${API_URL}/api/dilemmas?search=${encodeURIComponent(searchQuery)}`
-          : `${API_URL}/api/dilemmas`;
+        const params = new URLSearchParams({
+          page: page.toString(),
+          limit: ITEMS_PER_PAGE.toString(),
+        });
+        
+        if (searchQuery) {
+          params.append("search", searchQuery);
+        }
+
+        const url = `${API_URL}/api/dilemmas?${params.toString()}`;
         const res = await fetch(url);
-        const data = await res.json();
+        const result = await res.json();
 
         if (!mounted) return;
 
-        const list: Dilemma[] = data || [];
+        const list: Dilemma[] = result.data || [];
         setDilemmas(list);
+        
+        if (result.pagination) {
+          setTotalPages(result.pagination.totalPages);
+          setHasMore(result.pagination.hasMore);
+        }
 
         // ✅ derive categories dynamically
         const cats = Array.from(
@@ -79,7 +95,7 @@ export default function Home() {
     return () => {
       mounted = false;
     };
-  }, [searchQuery]);
+  }, [searchQuery, page]);
 
   // ✅ Time constants in milliseconds
   const MS_PER_DAY = 24 * 60 * 60 * 1000;
@@ -136,13 +152,21 @@ export default function Home() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setSearchQuery(searchInput);
+    setPage(1);
     setLoading(true);
   };
 
   const handleClearSearch = () => {
     setSearchInput("");
     setSearchQuery("");
+    setPage(1);
     setLoading(true);
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+    setLoading(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -325,6 +349,65 @@ export default function Home() {
             </div>
           )}
         </section>
+
+        {/* PAGINATION */}
+        {!loading && totalPages > 1 && (
+          <section className="mt-8 flex justify-center items-center gap-2">
+            <button
+              onClick={() => handlePageChange(page - 1)}
+              disabled={page === 1}
+              className={`px-4 py-2 rounded-lg text-sm font-medium ${
+                page === 1
+                  ? "bg-zinc-100 text-zinc-400 cursor-not-allowed"
+                  : "bg-white text-zinc-700 hover:bg-zinc-50 shadow-sm"
+              }`}
+            >
+              Previous
+            </button>
+
+            <div className="flex gap-1">
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                let pageNum: number;
+                
+                if (totalPages <= 5) {
+                  pageNum = i + 1;
+                } else if (page <= 3) {
+                  pageNum = i + 1;
+                } else if (page >= totalPages - 2) {
+                  pageNum = totalPages - 4 + i;
+                } else {
+                  pageNum = page - 2 + i;
+                }
+
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => handlePageChange(pageNum)}
+                    className={`w-10 h-10 rounded-lg text-sm font-medium ${
+                      page === pageNum
+                        ? "bg-amber-500 text-white"
+                        : "bg-white text-zinc-700 hover:bg-zinc-50 shadow-sm"
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              onClick={() => handlePageChange(page + 1)}
+              disabled={!hasMore}
+              className={`px-4 py-2 rounded-lg text-sm font-medium ${
+                !hasMore
+                  ? "bg-zinc-100 text-zinc-400 cursor-not-allowed"
+                  : "bg-white text-zinc-700 hover:bg-zinc-50 shadow-sm"
+              }`}
+            >
+              Next
+            </button>
+          </section>
+        )}
       </main>
     </div>
   );

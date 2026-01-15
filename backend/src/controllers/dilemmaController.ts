@@ -3,26 +3,46 @@ import prisma from "../prisma.ts";
 
 export const getAllDilemmas = async (req: Request, res: Response) => {
   try {
-    const { search } = req.query;
+    const { search, page = "1", limit = "10" } = req.query;
+    
+    const pageNum = Math.max(1, parseInt(page as string, 10));
+    const limitNum = Math.min(50, Math.max(1, parseInt(limit as string, 10)));
+    const skip = (pageNum - 1) * limitNum;
+
+    const where = search
+      ? {
+          OR: [
+            { title: { contains: search as string, mode: "insensitive" } },
+            { description: { contains: search as string, mode: "insensitive" } },
+            { author: { username: { contains: search as string, mode: "insensitive" } } },
+          ],
+        }
+      : undefined;
+
+    const total = await prisma.dilemma.count({ where });
 
     const dilemmas = await prisma.dilemma.findMany({
-      where: search
-        ? {
-            OR: [
-              { title: { contains: search as string, mode: "insensitive" } },
-              { description: { contains: search as string, mode: "insensitive" } },
-              { author: { username: { contains: search as string, mode: "insensitive" } } },
-            ],
-          }
-        : undefined,
+      where,
       orderBy: { createdAt: "desc" },
+      skip,
+      take: limitNum,
       include: {
         author: { select: { id: true, username: true, email: true } },
         votes: true,
         comments: true,
       },
     });
-    res.json(dilemmas);
+
+    res.json({
+      data: dilemmas,
+      pagination: {
+        page: pageNum,
+        limit: limitNum,
+        total,
+        totalPages: Math.ceil(total / limitNum),
+        hasMore: skip + dilemmas.length < total,
+      },
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch dilemmas" });
