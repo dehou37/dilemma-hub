@@ -180,19 +180,24 @@ export default function DilemmaPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg text-zinc-500">Loading...</div>
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-amber-500 border-t-transparent mb-4"></div>
+          <p className="text-lg text-zinc-600 font-medium">Loading dilemma...</p>
+        </div>
       </div>
     );
   }
 
   if (!dilemma) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center px-6">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-zinc-800 mb-2">Dilemma not found</h2>
+          <div className="text-6xl mb-4">😕</div>
+          <h2 className="text-3xl font-bold text-zinc-800 mb-3">Dilemma not found</h2>
+          <p className="text-zinc-600 mb-6">This dilemma may have been removed or doesn't exist.</p>
           <button
             onClick={() => router.push("/")}
-            className="text-amber-600 hover:underline"
+            className="px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg font-semibold shadow-md hover:shadow-lg hover:from-amber-600 hover:to-orange-600 transition-all"
           >
             ← Back to home
           </button>
@@ -205,40 +210,58 @@ export default function DilemmaPage() {
   const totalVotes = dilemma.votes.length;
 
   return (
-    <div className="min-h-screen bg-zinc-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
+    <div className="min-h-screen py-10">
+      <div className="max-w-4xl mx-auto px-6">
         {/* Back button */}
         <button
           onClick={() => router.push("/")}
-          className="mb-6 text-sm text-zinc-600 hover:text-zinc-900 flex items-center gap-1"
+          className="mb-6 text-sm text-zinc-700 hover:text-amber-600 flex items-center gap-2 font-medium transition-colors"
         >
           ← Back to dilemmas
         </button>
 
         {/* Dilemma Card */}
-        <div className="bg-white rounded-xl shadow-md p-8 mb-6">
+        <div className="bg-white rounded-2xl shadow-xl p-8 mb-8 border border-zinc-100">
           {/* Category Badge */}
           <span
-            className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${categoryStyle.bg} ${categoryStyle.text} mb-4`}
+            className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold ${categoryStyle.bg} ${categoryStyle.text} mb-5 shadow-sm`}
           >
-            <span>{categoryStyle.emoji}</span>
+            <span className="text-lg">{categoryStyle.emoji}</span>
             {dilemma.category}
           </span>
 
           {/* Title */}
-          <h1 className="text-3xl font-bold text-zinc-900 mb-4">{dilemma.title}</h1>
+          <h1 className="text-4xl font-bold text-slate-900 mb-5 leading-tight">{dilemma.title}</h1>
 
           {/* Description */}
-          <p className="text-zinc-700 text-lg mb-6 leading-relaxed">{dilemma.description}</p>
+          <p className="text-zinc-700 text-lg mb-8 leading-relaxed">{dilemma.description}</p>
 
           {/* Meta info */}
-          <div className="text-sm text-zinc-500 mb-8">
-            Posted by <span className="font-medium text-zinc-700">{dilemma.author?.username || "Anonymous"}</span> on {new Date(dilemma.createdAt).toLocaleDateString()} • {totalVotes} votes • {comments.length} comments
+          <div className="flex items-center gap-4 text-sm text-zinc-600 mb-8 flex-wrap">
+            <span className="flex items-center gap-1">
+              <span>✍️</span>
+              <span className="font-semibold text-zinc-800">{dilemma.author?.username || "Anonymous"}</span>
+            </span>
+            <span>•</span>
+            <span className="flex items-center gap-1">
+              <span>📅</span>
+              {new Date(dilemma.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+            </span>
+            <span>•</span>
+            <span className="flex items-center gap-1 font-semibold text-amber-600">
+              <span>🗳️</span>
+              {totalVotes} {totalVotes === 1 ? 'vote' : 'votes'}
+            </span>
+            <span>•</span>
+            <span className="flex items-center gap-1 font-semibold text-blue-600">
+              <span>💬</span>
+              {comments.length} {comments.length === 1 ? 'comment' : 'comments'}
+            </span>
           </div>
 
           {/* Voting Options */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-zinc-800 mb-3">Choose your stance:</h3>
+            <h3 className="text-xl font-bold text-zinc-900 mb-4">⚡ Choose your stance:</h3>
             {dilemma.options.map((option, index) => {
               const percentage = getVotePercentage(index);
               const voteCount = getVoteCount(index);
@@ -249,29 +272,35 @@ export default function DilemmaPage() {
                   <button
                     onClick={() => handleVote(index)}
                     disabled={hasVoted}
-                    className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
+                    className={`w-full text-left p-5 rounded-xl border-2 transition-all transform ${
                       isSelected
-                        ? "border-amber-500 bg-amber-50"
+                        ? "border-amber-500 bg-gradient-to-r from-amber-50 to-orange-50 shadow-md scale-[1.02]"
                         : hasVoted
-                        ? "border-zinc-200 bg-zinc-50 cursor-not-allowed"
-                        : "border-zinc-300 hover:border-amber-400 hover:bg-amber-50"
+                        ? "border-zinc-200 bg-zinc-50 cursor-not-allowed opacity-75"
+                        : "border-zinc-300 hover:border-amber-400 hover:bg-amber-50 hover:shadow-md hover:scale-[1.01] shadow-sm"
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium text-zinc-900">{option}</span>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className={`font-semibold ${
+                        isSelected ? "text-amber-900" : "text-zinc-900"
+                      }`}>
+                        {isSelected && "✅ "}{option}
+                      </span>
                       {hasVoted && (
-                        <span className="text-sm font-semibold text-zinc-700">
-                          {percentage}% ({voteCount})
+                        <span className={`text-sm font-bold ${
+                          isSelected ? "text-amber-700" : "text-zinc-600"
+                        }`}>
+                          {percentage}% <span className="text-xs font-normal">({voteCount} {voteCount === 1 ? 'vote' : 'votes'})</span>
                         </span>
                       )}
                     </div>
 
                     {/* Progress bar (only show after voting) */}
                     {hasVoted && (
-                      <div className="w-full bg-zinc-200 rounded-full h-2 overflow-hidden">
+                      <div className="w-full bg-zinc-200 rounded-full h-3 overflow-hidden shadow-inner">
                         <div
-                          className={`h-full transition-all ${
-                            isSelected ? "bg-amber-500" : "bg-zinc-400"
+                          className={`h-full transition-all duration-500 ease-out ${
+                            isSelected ? "bg-gradient-to-r from-amber-500 to-orange-500" : "bg-gradient-to-r from-zinc-400 to-zinc-500"
                           }`}
                           style={{ width: `${percentage}%` }}
                         />
@@ -284,19 +313,24 @@ export default function DilemmaPage() {
           </div>
 
           {!currentUser && (
-            <p className="mt-4 text-sm text-zinc-500 text-center">
-              <a href="/login" className="text-amber-600 hover:underline">
-                Log in
-              </a>{" "}
-              to vote and comment
-            </p>
+            <div className="mt-6 text-center p-5 bg-amber-50 rounded-xl border border-amber-200">
+              <p className="text-sm text-zinc-700 mb-3 font-medium">
+                🔒 Sign in to cast your vote and join the discussion
+              </p>
+              <button
+                onClick={() => router.push("/login")}
+                className="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg font-semibold shadow-md hover:shadow-lg hover:from-amber-600 hover:to-orange-600 transition-all"
+              >
+                Login / Sign Up
+              </button>
+            </div>
           )}
         </div>
 
         {/* Comments Section */}
-        <div className="bg-white rounded-xl shadow-md p-8">
-          <h2 className="text-2xl font-bold text-zinc-900 mb-6">
-            Comments ({comments.length})
+        <div className="bg-white rounded-2xl shadow-xl p-8 border border-zinc-100">
+          <h2 className="text-2xl font-bold text-zinc-900 mb-6 flex items-center gap-2">
+            💬 Discussion ({comments.length})
           </h2>
 
           {/* Comment Form */}
@@ -305,54 +339,65 @@ export default function DilemmaPage() {
               <textarea
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
-                placeholder="Share your thoughts..."
-                className="w-full border border-zinc-300 rounded-lg p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-amber-500"
+                placeholder="Share your thoughts and perspective..."
+                className="w-full border-2 border-zinc-200 rounded-xl p-4 text-sm resize-none focus:outline-none focus:border-amber-400 focus:ring-4 focus:ring-amber-100 transition-all shadow-sm"
                 rows={4}
               />
-              <div className="flex justify-end mt-2">
+              <div className="flex justify-end mt-3">
                 <button
                   type="submit"
                   disabled={submittingComment || !newComment.trim()}
-                  className="px-4 py-2 bg-amber-500 text-white rounded-lg text-sm font-medium hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg text-sm font-semibold shadow-md hover:shadow-lg hover:from-amber-600 hover:to-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
-                  {submittingComment ? "Posting..." : "Post Comment"}
+                  {submittingComment ? "📝 Posting..." : "✨ Post Comment"}
                 </button>
               </div>
             </form>
           ) : (
-            <div className="mb-8 p-4 bg-zinc-50 rounded-lg text-center">
-              <p className="text-sm text-zinc-600">
-                <a href="/login" className="text-amber-600 hover:underline font-medium">
-                  Log in
-                </a>{" "}
-                to join the discussion
+            <div className="mb-8 p-5 bg-amber-50 rounded-xl text-center border border-amber-200">
+              <p className="text-sm text-zinc-700 mb-3 font-medium">
+                👋 Join the conversation!
               </p>
+              <button
+                onClick={() => router.push("/login")}
+                className="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg font-semibold shadow-md hover:shadow-lg hover:from-amber-600 hover:to-orange-600 transition-all"
+              >
+                Login / Sign Up
+              </button>
             </div>
           )}
 
           {/* Comments List */}
-          <div className="space-y-4">
+          <div className="space-y-5">
             {loadingComments ? (
-              <p className="text-zinc-500 text-center py-8">Loading comments...</p>
+              <div className="text-center py-12">
+                <div className="inline-block animate-spin rounded-full h-10 w-10 border-4 border-amber-500 border-t-transparent mb-3"></div>
+                <p className="text-zinc-500 font-medium">Loading comments...</p>
+              </div>
             ) : comments.length === 0 ? (
-              <p className="text-zinc-500 text-center py-8">No comments yet. Be the first to share your thoughts!</p>
+              <div className="text-center py-12">
+                <div className="text-5xl mb-3">👋</div>
+                <p className="text-zinc-600 font-medium">No comments yet.</p>
+                <p className="text-sm text-zinc-500 mt-1">Be the first to share your thoughts!</p>
+              </div>
             ) : (
               comments.map((comment) => (
-                <div key={comment.id} className="border-b border-zinc-200 pb-4 last:border-b-0">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-full bg-amber-500 flex items-center justify-center text-white font-semibold">
+                <div key={comment.id} className="p-5 bg-zinc-50 rounded-xl border border-zinc-200 hover:border-amber-200 transition-colors">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-bold text-lg shadow-md">
                       {comment.user?.username?.[0]?.toUpperCase() || "?"}
                     </div>
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="font-medium text-zinc-900">
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="font-semibold text-zinc-900">
                           {comment.user?.username || "Anonymous"}
                         </span>
-                        <span className="text-xs text-zinc-500">
-                          {new Date(comment.createdAt).toLocaleDateString()}
+                        <span className="text-xs text-zinc-500 flex items-center gap-1">
+                          <span>📅</span>
+                          {new Date(comment.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                         </span>
                       </div>
-                      <p className="text-zinc-700 text-sm leading-relaxed">{comment.content}</p>
+                      <p className="text-zinc-700 leading-relaxed">{comment.content}</p>
                     </div>
                   </div>
                 </div>

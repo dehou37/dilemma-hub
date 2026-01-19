@@ -170,94 +170,114 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50">
-      <main className="mx-auto max-w-4xl px-6 py-10">
+    <div className="min-h-screen">
+      <main className="mx-auto max-w-6xl px-6 py-12">
         {/* HERO */}
-        <section className="mb-6 text-center">
-          <h1 className="text-4xl font-extrabold text-slate-900">
+        <section className="mb-10 text-center">
+          <h1 className="text-5xl font-extrabold bg-gradient-to-r from-slate-900 via-amber-900 to-orange-900 bg-clip-text text-transparent mb-3">
             What Would You Do?
           </h1>
-          <p className="mt-2 text-zinc-600">
+          <p className="mt-3 text-lg text-zinc-700 max-w-2xl mx-auto leading-relaxed">
             A community for exploring life's most challenging moral questions.
             Share dilemmas, debate perspectives, and discover where you stand.
           </p>
         </section>
 
         {/* SEARCH BAR */}
-        <section className="mb-6">
+        <section className="mb-8">
           <form onSubmit={handleSearch} className="relative">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">
+              🔍
+            </div>
             <input
               type="text"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Search dilemmas by title, description, or author..."
-              className="w-full px-4 py-3 pr-24 rounded-lg border border-zinc-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm"
+              className="w-full pl-12 pr-28 py-4 rounded-xl border-2 border-zinc-200 bg-white focus:outline-none focus:border-amber-400 focus:ring-4 focus:ring-amber-100 text-sm shadow-sm hover:shadow-md transition-all"
             />
             <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-2">
               {searchQuery && (
                 <button
                   type="button"
                   onClick={handleClearSearch}
-                  className="px-3 py-1 text-xs text-zinc-600 hover:text-zinc-900"
+                  className="px-4 py-2 bg-zinc-100 text-zinc-700 rounded-lg text-sm font-medium hover:bg-zinc-200 transition-colors"
                 >
                   Clear
                 </button>
               )}
               <button
                 type="submit"
-                className="px-4 py-1 bg-amber-500 text-white rounded-md text-sm font-medium hover:bg-amber-600"
+                className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg text-sm font-semibold hover:from-amber-600 hover:to-orange-600 shadow-sm"
               >
                 Search
               </button>
             </div>
           </form>
           {searchQuery && (
-            <p className="mt-2 text-sm text-zinc-600">
-              Searching for: <span className="font-medium">"{searchQuery}"</span>
+            <p className="mt-3 text-sm text-zinc-600 flex items-center gap-2">
+              <span>🔍 Searching for:</span>
+              <span className="font-semibold text-amber-700 bg-amber-50 px-2 py-1 rounded">"{searchQuery}"</span>
             </p>
           )}
         </section>
 
         {/* CATEGORY FILTERS */}
         <section className="mb-6">
-          <div className="flex gap-3 overflow-x-auto py-2">
-            {categories.map((c) => (
-              <button
-                key={c}
-                onClick={() => setActive(c)}
-                className={`whitespace-nowrap rounded-full px-4 py-2 text-sm ${
-                  active === c
-                    ? "bg-slate-800 text-white"
-                    : "bg-white text-zinc-700 shadow-sm"
-                }`}
-              >
-                {c === "All"
-                  ? "All Dilemmas"
-                  : c.charAt(0) + c.slice(1).toLowerCase()}
-              </button>
-            ))}
+          <h3 className="text-sm font-semibold text-zinc-700 mb-3">🏷️ Categories</h3>
+          <div className="flex gap-3 overflow-x-auto py-2 scrollbar-hide">
+            {categories.map((c) => {
+              const categoryEmojis: Record<string, string> = {
+                All: "🌐",
+                ETHICS: "⚖️",
+                LIFESTYLE: "🏡",
+                POLITICS: "🏛️",
+                WORK: "💼",
+                PERSONAL: "👤",
+                TECHNOLOGY: "💻",
+                OTHER: "📌"
+              };
+              return (
+                <button
+                  key={c}
+                  onClick={() => setActive(c)}
+                  className={`whitespace-nowrap rounded-full px-5 py-2.5 text-sm font-medium transition-all ${
+                    active === c
+                      ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md scale-105"
+                      : "bg-white text-zinc-700 shadow-sm hover:shadow-md hover:scale-105 border border-zinc-200"
+                  }`}
+                >
+                  <span className="mr-1.5">{categoryEmojis[c] || categoryEmojis.OTHER}</span>
+                  {c === "All"
+                    ? "All Dilemmas"
+                    : c.charAt(0) + c.slice(1).toLowerCase()}
+                </button>
+              );
+            })}
           </div>
         </section>
 
         {/* TIME FILTERS */}
-        <section className="mb-6">
-          <div className="flex gap-3 overflow-x-auto">
+        <section className="mb-8">
+          <h3 className="text-sm font-semibold text-zinc-700 mb-3">🕒 Time Period</h3>
+          <div className="flex gap-3 overflow-x-auto scrollbar-hide">
             {[
-              { label: "All Time", value: "ALL" },
-              { label: "Past Day", value: "DAY" },
-              { label: "Past 7 Days", value: "WEEK" },
-              { label: "Past Month", value: "MONTH" },
-              { label: "Past Year", value: "YEAR" },
+              { label: "All Time", value: "ALL", emoji: "♾️" },
+              { label: "Past Day", value: "DAY", emoji: "☀️" },
+              { label: "Past Week", value: "WEEK", emoji: "📅" },
+              { label: "Past Month", value: "MONTH", emoji: "🗓️" },
+              { label: "Past Year", value: "YEAR", emoji: "🎆" },
             ].map((item) => (
               <button
                 key={item.value}
                 onClick={() => setTimeFilter(item.value)}
-                className={`rounded-full px-4 py-2 text-sm ${
+                className={`rounded-full px-5 py-2.5 text-sm font-medium transition-all ${
                   timeFilter === item.value
-                    ? "bg-slate-800 text-white"
-                    : "bg-white text-zinc-700 shadow-sm"
+                    ? "bg-gradient-to-r from-slate-700 to-slate-900 text-white shadow-md scale-105"
+                    : "bg-white text-zinc-700 shadow-sm hover:shadow-md hover:scale-105 border border-zinc-200"
                 }`}
               >
+                <span className="mr-1.5">{item.emoji}</span>
                 {item.label}
               </button>
             ))}
@@ -267,57 +287,65 @@ export default function Home() {
         {/* DILEMMA LIST */}
         <section>
           {loading ? (
-            <div className="text-center text-zinc-500">
-              Loading dilemmas…
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-amber-500 border-t-transparent"></div>
+              <p className="mt-4 text-zinc-500 font-medium">Loading dilemmas…</p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-5">
               {visible.map((d) => {
                 const colors = getCategoryColor(d.category);
-                console.log(d);
                 return (
                   <a
                     key={d.id}
                     href={`/dilemma/${d.id}`}
-                    className="block rounded-lg bg-white p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                    className="block rounded-2xl bg-white p-6 shadow-md hover:shadow-xl transition-all cursor-pointer border border-zinc-100 hover:border-amber-200 transform hover:-translate-y-1"
                   >
                     <div className="flex items-start justify-between">
-                      <div>
-                        <div className="flex items-center gap-2">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-3">
                           {d.category && (
                             <span
-                              className={`rounded-full px-2 py-0.5 text-xs font-medium ${colors.bg} ${colors.text}`}
+                              className={`rounded-full px-3 py-1 text-xs font-semibold ${colors.bg} ${colors.text} shadow-sm`}
                             >
                               {d.category.toUpperCase()}
                             </span>
                           )}
-
-                          <h2 className="mt-1 text-lg font-semibold text-slate-900">
-                            {d.title}
-                          </h2>
                         </div>
 
-                        <p className="mt-2 text-sm text-zinc-600 line-clamp-2">
+                        <h2 className="text-xl font-bold text-slate-900 mb-2 hover:text-amber-600 transition-colors">
+                          {d.title}
+                        </h2>
+
+                        <p className="text-sm text-zinc-600 line-clamp-2 leading-relaxed mb-4">
                           {d.description}
                         </p>
 
-                        <div className="mt-3 flex items-center gap-4 text-sm text-zinc-500">
-                          <span className="font-medium text-zinc-700">
-                            Created by{" "} 
+                        <div className="flex items-center gap-4 text-xs text-zinc-500">
+                          <span className="font-medium text-zinc-700 flex items-center gap-1">
+                            <span>✍️</span>
                             {d.author?.username || "Anonymous"}
                           </span>
                           <span>•</span>
-                          <span>
+                          <span className="flex items-center gap-1">
+                            <span>📅</span>
                             {d.createdAt
                               ? new Date(d.createdAt).toLocaleDateString(
-                                  "en-CA"
+                                  "en-US",
+                                  { month: 'short', day: 'numeric', year: 'numeric' }
                                 )
                               : "—"}
                           </span>
                           <span>•</span>
-                          <span>{d.votes?.length ?? 0} votes</span>
+                          <span className="flex items-center gap-1 font-medium text-amber-600">
+                            <span>🗳️</span>
+                            {d.votes?.length ?? 0}
+                          </span>
                           <span>•</span>
-                          <span>{d.comments?.length ?? 0} comments</span>
+                          <span className="flex items-center gap-1 font-medium text-blue-600">
+                            <span>💬</span>
+                            {d.comments?.length ?? 0}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -326,20 +354,20 @@ export default function Home() {
               })}
 
               {visible.length === 0 && !loading && (
-                <div className="text-center py-12">
-                  <div className="text-5xl mb-4">🔍</div>
-                  <h3 className="text-lg font-semibold text-zinc-800 mb-2">
+                <div className="text-center py-16 px-6">
+                  <div className="text-6xl mb-4">🔍</div>
+                  <h3 className="text-xl font-bold text-zinc-800 mb-2">
                     {searchQuery ? "No results found" : "No dilemmas found"}
                   </h3>
-                  <p className="text-sm text-zinc-500 mb-4">
+                  <p className="text-sm text-zinc-600 mb-6 max-w-md mx-auto">
                     {searchQuery
                       ? `No dilemmas match "${searchQuery}". Try a different search term.`
-                      : "No dilemmas found for this filter."}
+                      : "No dilemmas found for this filter. Try adjusting your filters."}
                   </p>
                   {searchQuery && (
                     <button
                       onClick={handleClearSearch}
-                      className="text-amber-600 hover:text-amber-700 text-sm font-medium"
+                      className="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg text-sm font-semibold shadow-md hover:shadow-lg hover:from-amber-600 hover:to-orange-600"
                     >
                       Clear search
                     </button>
@@ -352,20 +380,20 @@ export default function Home() {
 
         {/* PAGINATION */}
         {!loading && totalPages > 1 && (
-          <section className="mt-8 flex justify-center items-center gap-2">
+          <section className="mt-10 flex justify-center items-center gap-3">
             <button
               onClick={() => handlePageChange(page - 1)}
               disabled={page === 1}
-              className={`px-4 py-2 rounded-lg text-sm font-medium ${
+              className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${
                 page === 1
                   ? "bg-zinc-100 text-zinc-400 cursor-not-allowed"
-                  : "bg-white text-zinc-700 hover:bg-zinc-50 shadow-sm"
+                  : "bg-white text-zinc-700 hover:bg-zinc-50 shadow-md hover:shadow-lg border border-zinc-200"
               }`}
             >
-              Previous
+              ← Previous
             </button>
 
-            <div className="flex gap-1">
+            <div className="flex gap-2">
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                 let pageNum: number;
                 
@@ -383,10 +411,10 @@ export default function Home() {
                   <button
                     key={pageNum}
                     onClick={() => handlePageChange(pageNum)}
-                    className={`w-10 h-10 rounded-lg text-sm font-medium ${
+                    className={`w-11 h-11 rounded-lg text-sm font-semibold transition-all ${
                       page === pageNum
-                        ? "bg-amber-500 text-white"
-                        : "bg-white text-zinc-700 hover:bg-zinc-50 shadow-sm"
+                        ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-md scale-110"
+                        : "bg-white text-zinc-700 hover:bg-zinc-50 shadow-sm hover:shadow-md border border-zinc-200"
                     }`}
                   >
                     {pageNum}
@@ -398,13 +426,13 @@ export default function Home() {
             <button
               onClick={() => handlePageChange(page + 1)}
               disabled={!hasMore}
-              className={`px-4 py-2 rounded-lg text-sm font-medium ${
+              className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all ${
                 !hasMore
                   ? "bg-zinc-100 text-zinc-400 cursor-not-allowed"
-                  : "bg-white text-zinc-700 hover:bg-zinc-50 shadow-sm"
+                  : "bg-white text-zinc-700 hover:bg-zinc-50 shadow-md hover:shadow-lg border border-zinc-200"
               }`}
             >
-              Next
+              Next →
             </button>
           </section>
         )}
