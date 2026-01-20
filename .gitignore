@@ -1,24 +1,5 @@
-# Node
+# Dependencies
 node_modules/
-dist/
-.env
-
-# VS Code
-.vscode/
-
-# Prisma
-.prisma/client/
-
-# Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-/generated/prisma
-
-
-# dependencies
-/node_modules
 /backend/node_modules
 /frontend/node_modules
 /.pnp
@@ -29,37 +10,25 @@ yarn-error.log*
 !.yarn/releases
 !.yarn/versions
 
-# testing
-/coverage
+# Environment variables
+.env
+.env*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# next.js
+# Build outputs
+dist/
+/build
 /.next/
 /out/
+/frontend/.next/
+/frontend/out/
 
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# env files (can opt-in for committing if needed)
-.env*
-
-# vercel
-.vercel
-
-# typescript
+# TypeScript
 *.tsbuildinfo
 next-env.d.ts
-
-# Ignore compiled TypeScript and generated artifacts in `src/` and prisma/
 **/src/**/*.js
 **/src/**/*.js.map
 **/src/**/*.d.ts
@@ -69,24 +38,23 @@ next-env.d.ts
 **/prisma/**/*.d.ts
 **/prisma/**/*.d.ts.map
 
-# Prisma client and engine
+# Prisma
 .prisma/
+.prisma/client/
+/generated/prisma
 
-# Frontend
-/.next/
-node_modules/
-
-# Local env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# Testing
+/coverage
 
 # Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+
+# Misc
+.DS_Store
+*.pem
 
 # Editors
 .vscode/
@@ -95,14 +63,10 @@ yarn-error.log*
 *.njsproj
 *.sln
 
-# Frontend
-/frontend/.next/
-/frontend/out/
-/frontend/.env.local
-/frontend/.env.development.local
-/frontend/.env.test.local
-/frontend/.env.production.local
-# Elastic Beanstalk Files
+# Deployment
+.vercel
+
+# Elastic Beanstalk
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
