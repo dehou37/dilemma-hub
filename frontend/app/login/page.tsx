@@ -39,8 +39,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center px-4">
-      <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-md">
+    <div className="min-h-[70vh] bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 relative overflow-hidden flex items-center justify-center px-4">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(251,191,36,0.15),transparent_50%),radial-gradient(circle_at_70%_60%,rgba(249,115,22,0.15),transparent_50%)] z-0" />
+      <div className="relative z-10 w-full max-w-md rounded-xl bg-white p-8 shadow-md">
         <div className="mb-6 text-center">
           <h2 className="text-2xl font-semibold">Welcome back</h2>
           <p className="text-sm text-zinc-500">Sign in to continue to Ethical Forum</p>

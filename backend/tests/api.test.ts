@@ -30,7 +30,7 @@ describe("API Endpoint Tests", () => {
     // First get all dilemmas
     const allDilemmas = await request(app).get("/api/dilemmas");
     
-    if (allDilemmas.body.length > 0) {
+    if (allDilemmas.body && allDilemmas.body.length > 0) {
       const firstDilemma = allDilemmas.body[0];
       
       // Get specific dilemma
@@ -72,7 +72,7 @@ describe("API Endpoint Tests", () => {
   it("should include author info in dilemma response", async () => {
     const response = await request(app).get("/api/dilemmas");
 
-    if (response.body.length > 0) {
+    if (response.body && response.body.length > 0) {
       const dilemma = response.body[0];
       expect(dilemma).toHaveProperty("author");
       expect(dilemma.author).toHaveProperty("username");

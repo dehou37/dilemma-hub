@@ -3,11 +3,7 @@ import prisma from "../prisma.ts";
 
 export const getAllDilemmas = async (req: Request, res: Response) => {
   try {
-    const { search, page = "1", limit = "10" } = req.query;
-    
-    const pageNum = Math.max(1, parseInt(page as string, 10));
-    const limitNum = Math.min(50, Math.max(1, parseInt(limit as string, 10)));
-    const skip = (pageNum - 1) * limitNum;
+    const { search } = req.query;
 
     const where = search
       ? {
@@ -19,13 +15,9 @@ export const getAllDilemmas = async (req: Request, res: Response) => {
         }
       : undefined;
 
-    const total = await prisma.dilemma.count({ where });
-
     const dilemmas = await prisma.dilemma.findMany({
       where,
       orderBy: { createdAt: "desc" },
-      skip,
-      take: limitNum,
       include: {
         author: { select: { id: true, username: true, email: true } },
         votes: true,
@@ -33,16 +25,7 @@ export const getAllDilemmas = async (req: Request, res: Response) => {
       },
     });
 
-    res.json({
-      data: dilemmas,
-      pagination: {
-        page: pageNum,
-        limit: limitNum,
-        total,
-        totalPages: Math.ceil(total / limitNum),
-        hasMore: skip + dilemmas.length < total,
-      },
-    });
+    res.json(dilemmas);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch dilemmas" });
@@ -177,5 +160,69 @@ export const deleteDilemma = async (req: Request, res: Response) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to delete dilemma" });
+  }
+};
+
+export const getStats = async (req: Request, res: Response) => {
+  try {
+    const totalDilemmas = await prisma.dilemma.count();
+    const totalVotes = await prisma.vote.count();
+    const totalComments = await prisma.comment.count();
+
+    res.json({
+      totalDilemmas,
+      totalVotes,
+      totalComments,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch stats" });
+  }
+};
+
+export const getTrending = async (req: Request, res: Response) => {
+  try {
+    // Get all dilemmas with vote counts
+    const dilemmas = await prisma.dilemma.findMany({
+      include: {
+        author: { select: { id: true, username: true, email: true } },
+        votes: true,
+        comments: true,
+      },
+    });
+
+    // Sort by vote count and take top 3
+    const trending = dilemmas
+      .sort((a, b) => b.votes.length - a.votes.length)
+      .slice(0, 3);
+
+    res.json(trending);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch trending dilemmas" });
+  }
+};
+
+export const getCategories = async (req: Request, res: Response) => {
+  try {
+    // Get all unique categories from database
+    const dilemmas = await prisma.dilemma.findMany({
+      select: { category: true },
+    });
+
+    const categories = Array.from(
+      new Set(dilemmas.map(d => d.category ? d.category.toUpperCase() : "OTHER"))
+    ).filter(Boolean);
+
+    // Sort categories, with OTHER at the end
+    const sorted = categories.filter(c => c !== "OTHER").sort();
+    if (categories.includes("OTHER")) {
+      sorted.push("OTHER");
+    }
+
+    res.json(["All", ...sorted]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch categories" });
   }
 };
