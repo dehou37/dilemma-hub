@@ -28,6 +28,8 @@ type Dilemma = {
   votes?: any[];
   comments?: any[];
   createdAt: string;
+  imageUrl?: string | null;
+  imagePrompt?: string | null;
 };
 
 export default function Home() {
@@ -401,11 +403,11 @@ export default function Home() {
                     style={{animationDelay: `${idx * 0.05}s`}}
                   >
                     {isHot && (
-                      <div className="absolute top-3 right-3 bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1 animate-pulse">
+                      <div className="absolute top-3 right-3 bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1 animate-pulse z-10">
                         🔥 Hot
                       </div>
                     )}
-                    <div className="flex items-start justify-between">
+                    <div className="flex items-start justify-between gap-6">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-3">
                           {d.category && (
@@ -452,6 +454,21 @@ export default function Home() {
                           </span>
                         </div>
                       </div>
+                      
+                      {/* AI Generated Image Thumbnail */}
+                      {d.imageUrl && (
+                        <div className="flex-shrink-0 w-32 h-32 relative">
+                          <img
+                            src={d.imageUrl}
+                            alt="AI Generated"
+                            className="w-full h-full object-cover rounded-lg shadow-md border-2 border-purple-200"
+                          />
+                          <div className="absolute top-1 right-1 bg-purple-500 text-white px-1.5 py-0.5 rounded text-[10px] font-bold shadow flex items-center gap-0.5">
+                            <span>✨</span>
+                            <span>AI</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </a>
                 );

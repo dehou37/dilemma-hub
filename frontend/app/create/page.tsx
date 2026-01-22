@@ -33,6 +33,11 @@ export default function CreateDilemmaPage() {
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("ETHICS");
   const [options, setOptions] = useState(["", ""]);
+  const [generateAIImage, setGenerateAIImage] = useState(false);
+  const [imagePrompt, setImagePrompt] = useState("");
+  const [imageStyle, setImageStyle] = useState<"vivid" | "natural">("vivid");
+  const [generatingImage, setGeneratingImage] = useState(false);
+  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
     // Check if user is logged in
@@ -96,6 +101,9 @@ export default function CreateDilemmaPage() {
           description: description.trim(),
           category,
           options: validOptions,
+          generateAIImage,
+          imagePrompt: generateAIImage ? imagePrompt.trim() : undefined,
+          imageStyle: generateAIImage ? imageStyle : undefined,
         }),
       });
 
@@ -110,6 +118,41 @@ export default function CreateDilemmaPage() {
     } catch (err: any) {
       setError(err.message || "An error occurred");
       setLoading(false);
+    }
+  };
+
+  const handleGeneratePreview = async () => {
+    if (!imagePrompt.trim()) {
+      setError("Please enter an image prompt");
+      return;
+    }
+
+    setGeneratingImage(true);
+    setError(null);
+
+    try {
+      const res = await fetch(`${API_URL}/api/ai/generate-image`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          prompt: imagePrompt.trim(),
+          style: imageStyle,
+          size: "1024x1024",
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to generate image");
+      }
+
+      setPreviewImageUrl(data.imageUrl);
+    } catch (err: any) {
+      setError(err.message || "Failed to generate preview image");
+    } finally {
+      setGeneratingImage(false);
     }
   };
 
@@ -244,6 +287,94 @@ export default function CreateDilemmaPage() {
               >
                 + Add another option
               </button>
+            )}
+          </div>
+
+          {/* AI Image Generation */}
+          <div className="border-t pt-6">
+            <div className="flex items-center gap-3 mb-4">
+              <input
+                type="checkbox"
+                id="generateAI"
+                checked={generateAIImage}
+                onChange={(e) => setGenerateAIImage(e.target.checked)}
+                className="w-4 h-4 text-amber-500 border-zinc-300 rounded focus:ring-amber-500"
+              />
+              <label htmlFor="generateAI" className="text-sm font-semibold text-zinc-800 cursor-pointer">
+                ✨ Generate AI Image/Comic
+              </label>
+            </div>
+
+            {generateAIImage && (
+              <div className="space-y-4 pl-7">
+                <div>
+                  <label className="block text-sm font-medium text-zinc-700 mb-2">
+                    Image Prompt
+                  </label>
+                  <textarea
+                    value={imagePrompt}
+                    onChange={(e) => setImagePrompt(e.target.value)}
+                    placeholder="Describe the image you want to generate (e.g., 'A comic-style illustration of a person at a crossroads')"
+                    className="w-full border border-zinc-300 rounded-lg px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    rows={3}
+                    maxLength={1000}
+                  />
+                  <p className="text-xs text-zinc-500 mt-1">{imagePrompt.length}/1000 characters</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-zinc-700 mb-2">
+                    Image Style
+                  </label>
+                  <div className="flex gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setImageStyle("vivid")}
+                      className={`flex-1 px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all ${
+                        imageStyle === "vivid"
+                          ? "bg-purple-100 text-purple-700 border-purple-500"
+                          : "bg-white text-zinc-700 border-zinc-200 hover:border-zinc-400"
+                      }`}
+                    >
+                      🎨 Vivid (Comic-style)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setImageStyle("natural")}
+                      className={`flex-1 px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all ${
+                        imageStyle === "natural"
+                          ? "bg-green-100 text-green-700 border-green-500"
+                          : "bg-white text-zinc-700 border-zinc-200 hover:border-zinc-400"
+                      }`}
+                    >
+                      📷 Natural (Realistic)
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleGeneratePreview}
+                  disabled={generatingImage || !imagePrompt.trim()}
+                  className="w-full px-4 py-2 bg-purple-500 text-white rounded-lg font-medium hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {generatingImage ? "Generating Preview..." : "🔮 Generate Preview"}
+                </button>
+
+                {previewImageUrl && (
+                  <div className="mt-4 border-2 border-purple-200 rounded-lg p-4 bg-purple-50">
+                    <p className="text-sm font-medium text-purple-900 mb-2">Preview:</p>
+                    <img
+                      src={previewImageUrl}
+                      alt="AI Generated Preview"
+                      className="w-full rounded-lg shadow-md"
+                    />
+                    <p className="text-xs text-purple-700 mt-2">
+                      This image will be attached to your dilemma when you post it.
+                    </p>
+                  </div>
+                )}
+              </div>
             )}
           </div>
 

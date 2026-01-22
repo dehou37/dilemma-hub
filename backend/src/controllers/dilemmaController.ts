@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import prisma from "../prisma.ts";
+import { generateImage } from "../services/aiImageService.ts";
 
 export const getAllDilemmas = async (req: Request, res: Response) => {
   try {
@@ -92,12 +93,39 @@ export const getMyDilemmas = async (req: Request, res: Response) => {
 
 export const createDilemma = async (req: Request, res: Response) => {
   try {
-    const { title, description, options, category } = req.body;
+    const { title, description, options, category, generateAIImage, imagePrompt, imageStyle } = req.body;
     const authorId = (req as any).user?.id;
     if (!authorId) return res.status(401).json({ error: "Authentication required" });
 
+    let imageUrl = null;
+    let finalImagePrompt = null;
+
+    // Generate AI image if requested
+    if (generateAIImage && imagePrompt) {
+      try {
+        const imageResult = await generateImage({
+          prompt: imagePrompt,
+          style: imageStyle || "vivid",
+          size: "1024x1024",
+        });
+        imageUrl = imageResult.url;
+        finalImagePrompt = imagePrompt;
+      } catch (error: any) {
+        console.error("Error generating AI image:", error);
+        // Continue creating dilemma even if image generation fails
+      }
+    }
+
     const dilemma = await prisma.dilemma.create({
-      data: { title, description, options, category, authorId },
+      data: { 
+        title, 
+        description, 
+        options, 
+        category, 
+        authorId,
+        imageUrl,
+        imagePrompt: finalImagePrompt,
+      },
     });
     res.json(dilemma);
   } catch (err) {
@@ -108,7 +136,7 @@ export const createDilemma = async (req: Request, res: Response) => {
 
 export const updateDilemma = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { title, description, options, category } = req.body;
+  const { title, description, options, category, generateAIImage, imagePrompt, imageStyle } = req.body;
   const userId = (req as any).user?.id;
   
   if (!userId) return res.status(401).json({ error: "Authentication required" });
@@ -121,10 +149,36 @@ export const updateDilemma = async (req: Request, res: Response) => {
       return res.status(403).json({ error: "Not authorized to edit this dilemma" });
     }
 
+    let imageUrl = dilemma.imageUrl;
+    let finalImagePrompt = dilemma.imagePrompt;
+
+    // Generate new AI image if requested
+    if (generateAIImage && imagePrompt) {
+      try {
+        const imageResult = await generateImage({
+          prompt: imagePrompt,
+          style: imageStyle || "vivid",
+          size: "1024x1024",
+        });
+        imageUrl = imageResult.url;
+        finalImagePrompt = imagePrompt;
+      } catch (error: any) {
+        console.error("Error generating AI image:", error);
+        // Continue updating dilemma even if image generation fails
+      }
+    }
+
     // Update the dilemma
     const updated = await prisma.dilemma.update({
       where: { id },
-      data: { title, description, options, category },
+      data: { 
+        title, 
+        description, 
+        options, 
+        category,
+        imageUrl,
+        imagePrompt: finalImagePrompt,
+      },
       include: {
         author: { select: { id: true, username: true, email: true } },
         votes: true,

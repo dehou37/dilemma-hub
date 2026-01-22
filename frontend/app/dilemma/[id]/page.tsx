@@ -35,6 +35,8 @@ type Dilemma = {
   votes: Vote[];
   comments: Comment[];
   author?: User;
+  imageUrl?: string | null;
+  imagePrompt?: string | null;
 };
 
 const categoryColors: Record<string, { bg: string; text: string; emoji: string }> = {
@@ -282,6 +284,28 @@ export default function DilemmaPage() {
 
           {/* Description */}
           <p className="text-zinc-700 text-lg mb-8 leading-relaxed">{dilemma.description}</p>
+
+          {/* AI Generated Image */}
+          {dilemma.imageUrl && (
+            <div className="mb-8">
+              <div className="relative rounded-xl overflow-hidden shadow-lg border-2 border-purple-200">
+                <img
+                  src={dilemma.imageUrl}
+                  alt="AI Generated Illustration"
+                  className="w-full h-auto"
+                />
+                <div className="absolute top-3 right-3 bg-purple-500/90 text-white px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 shadow-lg backdrop-blur-sm">
+                  <span>✨</span>
+                  <span>AI Generated</span>
+                </div>
+              </div>
+              {dilemma.imagePrompt && (
+                <p className="text-xs text-zinc-500 mt-2 italic">
+                  Image prompt: {dilemma.imagePrompt}
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Meta info with enhanced styling */}
           <div className="flex items-center gap-4 text-sm text-zinc-600 mb-8 flex-wrap">

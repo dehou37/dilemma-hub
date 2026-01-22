@@ -23,6 +23,8 @@ model Dilemma {
   description String
   category    Category  @default(OTHER)
   options     String[]
+  imageUrl    String?
+  imagePrompt String?
   author      User      @relation(fields: [authorId], references: [id])
   authorId    String
   votes       Vote[]
