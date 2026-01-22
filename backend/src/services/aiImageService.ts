@@ -1,3 +1,5 @@
+import { supabase } from "../supabaseClient.js";
+
 export interface GenerateImageParams {
   prompt: string;
   style?: "vivid" | "natural";
@@ -10,9 +12,9 @@ export interface GeneratedImage {
 }
 
 /**
- * Generate an image using Pollinations.ai API
- * Downloads the image and converts to base64 data URL for frontend display
- * Requires POLLINATIONS_API_KEY in .env file
+ * Generate an image using Pollinations.ai API and upload to Supabase Storage
+ * Returns permanent Supabase Storage URL
+ * Requires POLLINATIONS_API_KEY, SUPABASE_URL, and SUPABASE_SERVICE_KEY in .env
  */
 export async function generateImage(params: GenerateImageParams): Promise<GeneratedImage> {
   try {
@@ -25,37 +27,57 @@ export async function generateImage(params: GenerateImageParams): Promise<Genera
 
     // Use gptimage model
     const encodedPrompt = encodeURIComponent(prompt);
-    const apiUrl = `https://gen.pollinations.ai/image/${encodedPrompt}?model=gptimage&key=${apiKey}`;
+    const pollinationsUrl = `https://gen.pollinations.ai/image/${encodedPrompt}?model=gptimage&key=${apiKey}`;
 
     console.log("Generating image with Pollinations API (gptimage model)...");
 
-    // Make the request
-    const response = await fetch(apiUrl, {
+    // Fetch the image from Pollinations
+    const response = await fetch(pollinationsUrl, {
       method: "GET",
     });
 
     if (!response.ok) {
       const errorText = await response.text();
       console.error("Pollinations API error:", response.status, errorText);
-      throw new Error(`Pollinations API error: ${response.status} - ${errorText}`);
+      throw new Error(`Pollinations API error: ${response.status}`);
     }
 
-    // Get the image as an ArrayBuffer
+    // Get the image as a buffer
     const imageBuffer = await response.arrayBuffer();
-    
-    // Convert to base64
-    const base64Image = Buffer.from(imageBuffer).toString('base64');
-    
-    // Get content type from response headers
     const contentType = response.headers.get('content-type') || 'image/png';
-    
-    // Create a data URL that can be used directly in <img> tags
-    const dataUrl = `data:${contentType};base64,${base64Image}`;
+    const extension = contentType.split('/')[1] || 'png';
 
-    console.log("Image generated successfully");
+    console.log("Image generated, uploading to Supabase Storage...");
+
+    // Generate unique filename
+    const timestamp = Date.now();
+    const randomString = Math.random().toString(36).substring(7);
+    const filename = `ai-images/${timestamp}-${randomString}.${extension}`;
+
+    // Upload to Supabase Storage
+    const { data, error } = await supabase.storage
+      .from('dilemma-images') // Make sure this bucket exists in Supabase
+      .upload(filename, Buffer.from(imageBuffer), {
+        contentType: contentType,
+        cacheControl: '31536000', // Cache for 1 year
+      });
+
+    if (error) {
+      console.error("Supabase upload error:", error);
+      throw new Error(`Failed to upload image: ${error.message}`);
+    }
+
+    // Get public URL
+    const { data: publicUrlData } = supabase.storage
+      .from('dilemma-images')
+      .getPublicUrl(filename);
+
+    const publicUrl = publicUrlData.publicUrl;
+
+    console.log("Image uploaded successfully to Supabase:", publicUrl);
 
     return {
-      url: dataUrl,
+      url: publicUrl,
       revisedPrompt: prompt,
     };
   } catch (error: any) {

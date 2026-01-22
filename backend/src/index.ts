@@ -7,6 +7,7 @@ import dilemmaRoutes from "./routes/dilemmas.ts";
 import voteRoutes from "./routes/votes.ts";
 import commentRoutes from "./routes/comments.ts";
 import aiRoutes from "./routes/ai.ts";
+import imageProxyRoutes from "./routes/imageProxy.ts";
 import authOptional from "./middleware/authOptional.ts";
 import prisma from "./prisma.ts";
 
@@ -71,6 +72,7 @@ app.use("/api/dilemmas", dilemmaRoutes);
 app.use("/api/votes", voteRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/ai", aiRoutes);
+app.use("/api/image-proxy", imageProxyRoutes);
 
 // ✅ ✅ ✅ CRITICAL Render fix
 const PORT = Number(process.env.PORT) || 5000;
