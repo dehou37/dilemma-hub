@@ -2,7 +2,10 @@ import jwt from "jsonwebtoken";
 import prisma from "../prisma.ts";
 import type { Request, Response, NextFunction } from "express";
 
-const JWT_SECRET = process.env.JWT_SECRET || "dev_secret_change_me";
+if (!process.env.JWT_SECRET) {
+  throw new Error("JWT_SECRET environment variable is required");
+}
+const JWT_SECRET = process.env.JWT_SECRET;
 
 function parseCookie(cookieHeader: string | undefined) {
   if (!cookieHeader) return {} as Record<string, string>;
