@@ -41,38 +41,6 @@ docker-compose down
 - Backend: http://localhost:5000
 - Health Check: http://localhost:5000/health
 
-## 🔧 Environment Variables
-
-### Backend `.env` (root directory)
-
-```env
-# Database (Required)
-DATABASE_URL="postgresql://user:password@localhost:5432/dilemma_hub"
-
-# JWT (Required - generate a strong random secret)
-JWT_SECRET=""
-
-# Frontend URL (Required)
-FRONTEND_URL="http://localhost:3000"
-
-# Server
-NODE_ENV=development
-PORT=5000
-
-# Supabase Storage (Required for AI image generation)
-SUPABASE_URL="https://your-project.supabase.co"
-SUPABASE_SERVICE_KEY="your-supabase-service-key"
-
-# Pollinations.ai (Required for AI image generation)
-POLLINATIONS_API_KEY="your-pollinations-api-key"
-```
-
-### Frontend `frontend/.env.local`
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:5000
-```
-
 ## 💻 Development (without Docker)
 
 ### Backend Setup
