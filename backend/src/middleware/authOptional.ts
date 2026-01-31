@@ -2,10 +2,14 @@ import jwt from "jsonwebtoken";
 import prisma from "../prisma.ts";
 import type { Request, Response, NextFunction } from "express";
 
-if (!process.env.JWT_SECRET) {
-  throw new Error("JWT_SECRET environment variable is required");
+// JWT_SECRET is validated in index.ts, but also check here for safety  
+function getJWTSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error("JWT_SECRET environment variable is required");
+  }
+  return secret;
 }
-const JWT_SECRET = process.env.JWT_SECRET;
 
 function parseCookie(cookieHeader: string | undefined) {
   if (!cookieHeader) return {} as Record<string, string>;
@@ -32,7 +36,7 @@ export default async function authOptional(req: Request, _res: Response, next: N
   if (!token) return next();
 
   try {
-    const payload = jwt.verify(token, JWT_SECRET) as any;
+    const payload = jwt.verify(token, getJWTSecret()) as any;
     if (payload?.userId) {
       const user = await prisma.user.findUnique({
         where: { id: payload.userId },

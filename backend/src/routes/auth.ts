@@ -6,10 +6,14 @@ import authOptional from "../middleware/authOptional.ts";
 
 const router = Router();
 
-if (!process.env.JWT_SECRET) {
-  throw new Error("JWT_SECRET environment variable is required");
+// JWT_SECRET is validated in index.ts, but also check here for safety
+function getJWTSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error("JWT_SECRET environment variable is required");
+  }
+  return secret;
 }
-const JWT_SECRET = process.env.JWT_SECRET;
 
 function setAccessCookie(res: any, token: string) {
   const isProd = process.env.NODE_ENV === "production";
@@ -44,8 +48,8 @@ router.post("/register", async (req, res) => {
     const hashed = await argon2.hash(password);
     const user = await prisma.user.create({ data: { username, email, password: hashed } });
 
-    const accessToken = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "15m" });
-    const refreshToken = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "7d" });
+    const accessToken = jwt.sign({ userId: user.id }, getJWTSecret(), { expiresIn: "15m" });
+    const refreshToken = jwt.sign({ userId: user.id }, getJWTSecret(), { expiresIn: "7d" });
     setAccessCookie(res, accessToken);
     setRefreshCookie(res, refreshToken);
 
@@ -71,8 +75,8 @@ router.post("/login", async (req, res) => {
     const valid = await argon2.verify(user.password!, password);
     if (!valid) return res.status(401).json({ error: "Invalid credentials" });
 
-    const accessToken = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "15m" });
-    const refreshToken = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "7d" });
+    const accessToken = jwt.sign({ userId: user.id }, getJWTSecret(), { expiresIn: "15m" });
+    const refreshToken = jwt.sign({ userId: user.id }, getJWTSecret(), { expiresIn: "7d" });
     setAccessCookie(res, accessToken);
     setRefreshCookie(res, refreshToken);
 
@@ -106,9 +110,9 @@ router.post("/refresh", async (req, res) => {
     const token = cookies["refreshToken"];
     if (!token) return res.status(401).json({ error: "No refresh token" });
 
-    const payload = jwt.verify(token, JWT_SECRET) as any;
+    const payload = jwt.verify(token, getJWTSecret()) as any;
     const userId = payload.userId;
-    const accessToken = jwt.sign({ userId }, JWT_SECRET, { expiresIn: "15m" });
+    const accessToken = jwt.sign({ userId }, getJWTSecret(), { expiresIn: "15m" });
     setAccessCookie(res, accessToken);
     res.json({ ok: true });
   } catch (err) {

@@ -23,16 +23,6 @@ A full-stack dilemma forum application where users can post moral and ethical di
 - Tailwind CSS 4.1.17
 - Biome for linting and formatting
 
-**Testing:**
-- Jest with ts-jest
-- Supertest for API testing
-- Non-destructive test suite
-
-**Deployment:**
-- Docker & Docker Compose ready
-- Supports AWS ECS, Azure Container Apps
-- Render and Vercel compatible
-
 ## 📦 Quick Start with Docker
 
 ```bash
@@ -251,17 +241,7 @@ dilemmahub/
 - Database connection health checks
 - Input validation on all endpoints
 
-## 🚢 Deployment
 
-See [DOCKER.md](DOCKER.md) for detailed deployment instructions for:
-- AWS ECS (Elastic Container Service)
-- AWS Elastic Beanstalk
-- AWS App Runner
-- Azure Container Apps
-- Azure Container Instances
-- Azure App Service
 
-## 📝 License
 
-This project is open source and available for educational purposes.
 

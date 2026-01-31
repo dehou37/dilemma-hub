@@ -155,12 +155,9 @@ export default function Home() {
       }
     });
 
-    // 3️⃣ Sort OTHER last
-    return filtered.sort((a, b) => {
-      if ((a.category ?? "OTHER").toUpperCase() === "OTHER") return 1;
-      if ((b.category ?? "OTHER").toUpperCase() === "OTHER") return -1;
-      return 0;
-    });
+    // 3️⃣ Maintain chronological order (latest first, already sorted by backend)
+    // No additional sorting needed - backend returns dilemmas ordered by createdAt desc
+    return filtered;
   }
 
   const visible = applyFilters(dilemmas);
