@@ -1,10 +1,7 @@
-// Shared setup - runs once before all test files
-// NO database cleanup - preserves existing data
+// Shared setup - runs once before test environment is initialized
+// Load environment variables BEFORE any test modules are imported
 
-beforeAll(async () => {
-  console.log("🧪 Starting tests (database data preserved)");
-});
+import dotenv from 'dotenv';
+dotenv.config();
 
-afterAll(async () => {
-  console.log("✅ Tests complete (database data preserved)");
-});
+console.log("🧪 Test environment initialized");

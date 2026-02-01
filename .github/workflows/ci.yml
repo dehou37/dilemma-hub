@@ -56,6 +56,8 @@ jobs:
           DATABASE_URL: postgresql://testuser:testpassword@localhost:5432/dilemma_hub_test
           JWT_SECRET: test_secret_key_for_ci
           NODE_ENV: test
+          SUPABASE_URL: https://test.supabase.co
+          SUPABASE_SERVICE_KEY: test_key_for_ci
         run: npm test
 
   # Frontend build (no linter)

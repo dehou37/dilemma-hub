@@ -1,10 +1,6 @@
 import request from "supertest";
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
-
-// Load environment variables before importing routes
-dotenv.config();
 
 import authRoutes from "../src/routes/auth";
 import dilemmaRoutes from "../src/routes/dilemmas";
